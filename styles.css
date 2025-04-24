@@ -1,0 +1,83 @@
+/* Paleta latina: colores cálidos, vivos y contrastantes */
+:root {
+  --color-primario: #f72585;
+  --color-secundario: #b5179e;
+  --color-acento: #7209b7;
+  --color-fondo: #f8f9fa;
+  --color-texto: #212529;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--color-fondo);
+  color: var(--color-texto);
+}
+
+header {
+  background: linear-gradient(90deg, var(--color-primario), var(--color-secundario));
+  color: white;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 3rem;
+  margin: 0;
+}
+
+.slogan {
+  font-style: italic;
+  font-size: 1.2rem;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+  gap: 2rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+main {
+  padding: 2rem;
+  line-height: 1.6;
+}
+
+h2 {
+  color: var(--color-primario);
+}
+
+.player {
+  margin-top: 1rem;
+  background-color: #fff0f6;
+  border-left: 5px solid var(--color-primario);
+  padding: 1rem;
+  border-radius: 8px;
+}
+
+section {
+  margin-bottom: 3rem;
+}
+
+.redes a {
+  color: var(--color-acento);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+footer {
+  background-color: var(--color-acento);
+  color: white;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  margin-top: 3rem;
+}
