@@ -64,70 +64,49 @@
             color: var(--primary-color);
         }
 
-        .contact-form-section {
+        .trends-section {
             background-color: #292929;
             padding: 40px 20px;
             border-radius: 10px;
             margin-top: 30px;
+            text-align: center;
             max-width: 600px;
             width: 90%;
         }
 
-        .contact-form-section h3 {
+        .trends-section h3 {
             color: var(--primary-color);
-            text-align: center;
-            margin-bottom: 20px;
             font-size: 2em;
+            margin-bottom: 15px;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
         }
 
-        .form-group {
+        .trends-section p {
+            font-size: 1.1em;
+            color: #eee;
+            line-height: 1.6;
             margin-bottom: 20px;
         }
 
-        .form-group label {
-            display: block;
-            color: #eee;
-            margin-bottom: 5px;
-            font-size: 1em;
-        }
-
-        .form-group input[type="text"],
-        .form-group input[type="email"],
-        .form-group textarea {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #555;
-            border-radius: 6px;
-            background-color: #444;
-            color: #eee;
-            font-size: 1em;
-            box-sizing: border-box;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .form-group button[type="submit"] {
+        .trends-section a {
+            display: inline-block;
             background-color: var(--secondary-color);
             color: var(--text-color);
-            border: none;
-            border-radius: 8px;
             padding: 12px 25px;
-            font-size: 1.1em;
-            cursor: pointer;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
             transition: background-color 0.3s ease;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
         }
 
-        .form-group button[type="submit"]:hover {
+        .trends-section a:hover {
             background-color: darken(var(--secondary-color), 10%);
         }
 
-        .form-group button[type="submit"]:active {
-            transform: scale(0.95);
+        .trends-section br {
+            margin-bottom: 10px;
         }
 
         .player-container {
@@ -149,7 +128,15 @@
         <a href="#" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
         <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
         <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        </div>
+    </div>
+
+    <div class="trends-section">
+        <h3>Tendencias</h3>
+        <p>Toda la música nueva, en un solo lugar. La dinámica se explica por sí sola.</p>
+        <a href="/trends-suggestions/">En este enlace</a>
+        <br>
+        ¿Nos ayudas?
+    </div>
 
     <div class="player-container" id="player">
         <h1>Escúchanos en vivo</h1>
@@ -165,27 +152,6 @@
             </div>
             <div class="volume-display" id="volume-display">Volumen: 20%</div>
         </div>
-    </div>
-
-    <div class="contact-form-section">
-        <h3>¡Contáctanos!</h3>
-        <form action="procesar_formulario.php" method="post">
-            <div class="form-group">
-                <label for="nombre">Nombre:</label>
-                <input type="text" id="nombre" name="nombre" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="mensaje">Mensaje:</label>
-                <textarea id="mensaje" name="mensaje" rows="5" required></textarea>
-            </div>
-            <div class="form-group">
-                <button type="submit">Enviar Mensaje</button>
-            </div>
-        </form>
     </div>
 
     <script src="https://kit.fontawesome.com/your_fontawesome_kit.js" crossorigin="anonymous"></script>
@@ -225,22 +191,4 @@
 
                 // Extraer datos de la canción actual
                 const songTitle = data.now_playing.song.title || "Sin información";
-                const songArtist = data.now_playing.song.artist || "Desconocido";
-
-                // Actualizar información en la página
-                trackInfo.textContent = `Escuchando: ${songArtist} - ${songTitle}`;
-            } catch (error) {
-                trackInfo.textContent = "No se pudo obtener la información de la canción";
-                console.error("Error al obtener los metadatos:", error);
-            }
-        }
-
-        // Actualizar los metadatos cada 15 segundos
-        setInterval(fetchMetadata, 15000);
-
-        // Cargar los metadatos al iniciar el reproductor
-        window.addEventListener('load', fetchMetadata);
-        updateVolumeDisplay();
-    </script>
-</body>
-</html>
+                const songArtist =
