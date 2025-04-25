@@ -5,211 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Latina Live - Tu Radio Latina en Vivo</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        /* Estilos adicionales para el index */
-        .welcome-section {
-            text-align: center;
-            padding: 60px 20px;
-            background-color: #333;
-            border-radius: 10px;
-            margin-bottom: 30px;
-        }
-
-        .welcome-section h2 {
-            color: var(--primary-color);
-            font-size: 3em;
-            margin-bottom: 15px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
-        }
-
-        .welcome-section p {
-            font-size: 1.2em;
-            color: #eee;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: var(--background-color);
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 3px 7px rgba(0, 0, 0, 0.6);
-        }
-
-        .cta-button:hover {
-            background-color: darken(var(--accent-color), 15%);
-        }
-
-        .social-links {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .social-links h3 {
-            color: #ddd;
-            margin-bottom: 10px;
-        }
-
-        .social-links a {
-            display: inline-block;
-            margin: 0 15px;
-            color: #ddd;
-            font-size: 1.5em;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .social-links a:hover {
-            color: var(--primary-color);
-        }
-
-        .trends-section {
-            background-color: #292929;
-            padding: 40px 20px;
-            border-radius: 10px;
-            margin-top: 30px;
-            text-align: center;
-            max-width: 600px;
-            width: 90%;
-        }
-
-        .trends-section h3 {
-            color: var(--primary-color);
-            font-size: 2em;
-            margin-bottom: 15px;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-        }
-
-        .trends-section p {
-            font-size: 1.1em;
-            color: #eee;
-            line-height: 1.6;
-            margin-bottom: 20px;
-        }
-
-        .trends-section a {
-            display: inline-block;
-            background-color: var(--secondary-color);
-            color: var(--text-color);
-            padding: 12px 25px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-        }
-
-        .trends-section a:hover {
-            background-color: darken(var(--secondary-color), 10%);
-        }
-
-        .trends-section br {
-            margin-bottom: 10px;
-        }
-
-        .player-container {
-            margin-top: 40px;
-            text-align: center;
-        }
-    </style>
-</head>
+    <link rel="icon" href="favicon.ico" type="image/x-icon"> </head>
 <body>
-    <div class="welcome-section">
+    <aside class="player-container" id="player">
+        <h1>Escúchanos en vivo</h1>
+        <p>Si quieres estar al tanto de todo lo que tenemos para ti, ¡escúchanos!</p>
+        <div class="audio-player">
+            <audio id="audio" controls autoplay>
+                Tu navegador no soporta el elemento de audio.
+            </audio>
+            <div class="track-info" id="track-info">Cargando información...</div>
+            <div class="controls">
+                <button onclick="lowerVolume()" aria-label="Bajar volumen">Bajar Volumen</button>
+                <button onclick="raiseVolume()" aria-label="Subir volumen">Subir Volumen</button>
+            </div>
+            <div class="volume-display" id="volume-display">Volumen: 20%</div>
+        </div>
+    </aside>
+
+    <header class="welcome-section">
         <h2>¡Bienvenido a Latina Live!</h2>
         <p>Tu espacio radial donde la diversidad musical latina cobra vida. Desde los ritmos más clásicos hasta las últimas tendencias, en Latina Live encontrarás una mezcla vibrante de géneros para todos los gustos.</p>
         <p>Prepárate para vibrar con la energía de nuestros DJs en vivo y sumergirte en un universo de sonidos que te harán sentir la pasión latina en cada nota.</p>
-        <a href="#player" class="cta-button">¡Escucha en Vivo Ahora!</a>
-    </div>
+    </header>
 
-    <div class="social-links">
-        <h3>¡Síguenos en nuestras redes!</h3>
-        <a href="#" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-        <a href="#" target="_blank" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-        <a href="#" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-    </div>
+    <nav class="site-nav">
+        <ul>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/trends-suggestions/">Tendencias</a></li>
+            <li><a href="/social/">Redes Sociales</a></li>
+            <li><a href="/contact/">Contacto</a></li>
+            </ul>
+    </nav>
 
-    <div class="trends-section">
-        <h3>Tendencias</h3>
-        <p>Toda la música nueva, en un solo lugar. La dinámica se explica por sí sola.</p>
-        <a href="/trends-suggestions/">En este enlace</a>
-        <br>
-        ¿Nos ayudas?
-    </div>
+    <main>
+        <section class="trends-section">
+            <h3>Tendencias</h3>
+            <p>Toda la música nueva, en un solo lugar. La dinámica se explica por sí sola.</p>
+            <a href="/trends-suggestions/">En este enlace</a>
+            <br>
+            ¿Nos ayudas?
+        </section>
+    </main>
 
-    <div class="player-container" id="player">
-        <h1>Escúchanos en vivo</h1>
-        <p>Si quieres estar al tanto de todo lo que tenemos para ti, ¡escúchanos!</p>
-    <div class="audio-player">
-        <audio id="audio" controls autoplay>
-            Tu navegador no soporta el elemento de audio.
-        </audio>
-        <div class="track-info" id="track-info">Escuchando Latina Live</div>
-        <div class="controls">
-            <button onclick="lowerVolume()" aria-label="Bajar volumen">Bajar Volumen</button>
-            <button onclick="raiseVolume()" aria-label="Subir volumen">Subir Volumen</button>
-        </div>
-        <div class="volume-display" id="volume-display">Volumen: 20%</div>
-    </div>
+    <footer class="site-footer">
+        <p>&copy; 2025 Latina Live</p>
+    </footer>
 
+    <script src="https://kit.fontawesome.com/your_fontawesome_kit.js" crossorigin="anonymous"></script>
     <script>
-        const audio = document.getElementById('audio');
-        const trackInfo = document.getElementById('track-info');
-        const volumeDisplay = document.getElementById('volume-display');
+        document.addEventListener('DOMContentLoaded', function() {
+            const audio = document.getElementById('audio');
+            const trackInfo = document.getElementById('track-info');
+            const volumeDisplay = document.getElementById('volume-display');
 
-        // URL del streaming
-        const streamUrl = "https://ahmrs.net/listen/latina/live";
-        audio.src = streamUrl;
-        audio.volume = 0.2;  // Volumen inicial al 20%
+            if (audio) {
+                const streamUrl = "https://ahmrs.net/listen/latina/live";
+                audio.src = streamUrl;
+                audio.volume = 0.2;
 
-        function updateVolumeDisplay() {
-            volumeDisplay.textContent = `Volumen: ${Math.round(audio.volume * 100)}%`;
-        }
-
-        function lowerVolume() {
-            audio.volume = Math.max(0, audio.volume - 0.1);
-            updateVolumeDisplay();
-        }
-
-        function raiseVolume() {
-            audio.volume = Math.min(1, audio.volume + 0.1);
-            updateVolumeDisplay();
-        }
-
-        // Llamar a la API de AzuraCast para obtener los metadatos
-        async function fetchMetadata() {
-            try {
-                const response = await fetch('https://ahmrs.net/api/nowplaying/1', {
-                    headers: {
-                        'Content-Type': 'application/json; charset=utf-8'
+                function updateVolumeDisplay() {
+                    if (volumeDisplay) {
+                        volumeDisplay.textContent = `Volumen: ${Math.round(audio.volume * 100)}%`;
                     }
-                });
-                const data = await response.json();
+                }
 
-                // Extraer datos de la canción actual
-                const songTitle = data.now_playing.song.title || "Sin información";
-                const songArtist = data.now_playing.song.artist || "Desconocido";
+                function lowerVolume() {
+                    audio.volume = Math.max(0, audio.volume - 0.1);
+                    updateVolumeDisplay();
+                }
 
-                // Actualizar información en la página
-                trackInfo.textContent = `Escuchando: ${songArtist} - ${songTitle}`;
-            } catch (error) {
-                trackInfo.textContent = "No se pudo obtener los metadatos";
-                console.error("Error al obtener los metadatos:", error);
+                function raiseVolume() {
+                    audio.volume = Math.min(1, audio.volume + 0.1);
+                    updateVolumeDisplay();
+                }
+
+                async function fetchMetadata() {
+                    if (trackInfo) {
+                        try {
+                            const response = await fetch('https://ahmrs.net/api/nowplaying/1', {
+                                headers: {
+                                    'Content-Type': 'application/json; charset=utf-8'
+                                }
+                            });
+                            const data = await response.json();
+
+                            const songTitle = data.now_playing.song.title || "Sin información";
+                            const songArtist = data.now_playing.song.artist || "Desconocido";
+
+                            trackInfo.textContent = `Escuchando: ${songArtist} - ${songTitle}`;
+                        } catch (error) {
+                            trackInfo.textContent = "No se pudo obtener la información de la canción";
+                            console.error("Error al obtener los metadatos:", error);
+                        }
+                    }
+                }
+
+                setInterval(fetchMetadata, 15000);
+                fetchMetadata();
+                updateVolumeDisplay();
+            } else {
+                console.error("Error: El elemento de audio con ID 'audio' no se encontró.");
             }
-        }
-
-        // Actualizar los metadatos cada 15 segundos
-        setInterval(fetchMetadata, 15000);
-
-        // Cargar los metadatos al iniciar el reproductor
-        window.addEventListener('load', fetchMetadata);
-        updateVolumeDisplay();
+        });
     </script>
 </body>
 </html>

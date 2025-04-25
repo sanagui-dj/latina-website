@@ -1,15 +1,17 @@
 /* styles.css */
 
 :root {
-    --primary-color: #e91e63; /* Un rosa vibrante */
-    --secondary-color: #673ab7; /* Un morado intenso */
-    --text-color: #fff; /* Texto blanco para contraste */
-    --background-color: #121212; /* Fondo oscuro elegante */
-    --accent-color: #ffc107; /* Un amarillo para detalles */
+    --primary-color: #e91e63;
+    --secondary-color: #673ab7;
+    --text-color: #fff;
+    --background-color: #121212;
+    --accent-color: #ffc107;
+    --font-primary: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --font-secondary: sans-serif;
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--font-primary), var(--font-secondary);
     background-color: var(--background-color);
     color: var(--text-color);
     margin: 0;
@@ -20,30 +22,61 @@ body {
     justify-content: flex-start;
     min-height: 100vh;
     box-sizing: border-box;
+    line-height: 1.6;
+}
+
+h1, h2, h3 {
+    color: var(--primary-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    margin-bottom: 1em;
+    text-align: center;
 }
 
 h1 {
-    color: var(--primary-color);
     font-size: 2.5em;
-    margin-bottom: 10px;
-    text-align: center;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+h2 {
+    font-size: 2em;
+}
+
+h3 {
+    font-size: 1.5em;
+    color: #ddd;
+    margin-bottom: 0.8em;
 }
 
 p {
     font-size: 1.1em;
     color: #ddd;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 1.5em;
+}
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.3s ease-in-out;
+}
+
+a:hover {
+    color: darken(var(--accent-color), 15%);
+}
+
+/* Estilos para el reproductor (ahora primero) */
+.player-container {
+    margin-top: 2em;
+    margin-bottom: 2em;
+    text-align: center;
+    width: 90%;
+    max-width: 400px;
 }
 
 .audio-player {
     background-color: #222;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
-    padding: 20px;
-    width: 90%; /* Ajuste para móviles */
-    max-width: 400px; /* Límite para pantallas grandes */
+    padding: 1.5em;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -51,79 +84,165 @@ p {
 
 audio {
     width: 100%;
-    margin-bottom: 15px;
+    margin-bottom: 1em;
     border-radius: 6px;
-    outline: none; /* Evita el contorno al enfocar */
+    outline: none;
 }
 
 .track-info {
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: var(--accent-color);
-    margin-bottom: 10px;
-    text-align: center;
+    margin-bottom: 0.8em;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 .controls {
     display: flex;
-    gap: 15px;
-    margin-top: 15px;
+    gap: 1em;
+    margin-top: 1em;
 }
 
-button {
+.controls button {
     background-color: var(--secondary-color);
     color: var(--text-color);
     border: none;
     border-radius: 8px;
-    padding: 10px 20px;
-    font-size: 1em;
+    padding: 0.8em 1.5em;
+    font-size: 0.9em;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
-button:hover {
+.controls button:hover {
     background-color: darken(var(--secondary-color), 10%);
+    transform: scale(1.05);
 }
 
-button:active {
+.controls button:active {
     transform: scale(0.95);
 }
 
 .volume-display {
-    font-size: 1em;
+    font-size: 0.9em;
     color: #aaa;
-    margin-top: 10px;
+    margin-top: 0.8em;
     text-align: center;
 }
 
-/* Estilos para pantallas más pequeñas (móviles) */
-@media (max-width: 600px) {
-    h1 {
-        font-size: 2em;
-        margin-bottom: 15px;
-    }
+/* Estilos para la sección de bienvenida */
+.welcome-section {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #333;
+    border-radius: 10px;
+    margin-bottom: 2em;
+}
 
-    p {
-        font-size: 1em;
-        margin-bottom: 25px;
-    }
+.welcome-section h2 {
+    color: var(--primary-color);
+    font-size: 2em;
+    margin-bottom: 1em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+}
 
-    .audio-player {
-        padding: 15px;
-    }
+.welcome-section p {
+    font-size: 1.1em;
+    color: #eee;
+    line-height: 1.6;
+    margin-bottom: 1.5em;
+}
 
-    .controls {
-        gap: 10px;
-    }
+/* Estilos para la navegación */
+.site-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 2em 0;
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+}
 
-    button {
-        padding: 8px 16px;
-        font-size: 0.9em;
-    }
+.site-nav ul li a {
+    color: #ddd;
+    text-decoration: none;
+    font-size: 1.1em;
+    transition: color 0.3s ease-in-out;
+}
 
-    .volume-display {
-        font-size: 0.9em;
+.site-nav ul li a:hover {
+    color: var(--accent-color);
+}
+
+/* Estilos para la sección de tendencias */
+.trends-section {
+    background-color: #292929;
+    padding: 30px 20px;
+    border-radius: 10px;
+    margin-top: 2em;
+    margin-bottom: 2em;
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+}
+
+.trends-section h3 {
+    color: var(--primary-color);
+    font-size: 1.8em;
+    margin-bottom: 1em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.trends-section p {
+    font-size: 1em;
+    margin-bottom: 1.2em;
+}
+
+.trends-section a {
+    display: inline-block;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.trends-section a:hover {
+    background-color: darken(var(--secondary-color), 10%);
+    transform: scale(1.03);
+}
+
+.trends-section br {
+    margin-bottom: 0.5em;
+}
+
+/* Estilos para el footer básico */
+.site-footer {
+    background-color: #333;
+    color: #eee;
+    padding: 1em 20px;
+    text-align: center;
+    margin-top: 3em;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 0.9em;
+}
+
+/* Media Queries (ajusta si es necesario) */
+@media (max-width: 768px) {
+    .site-nav ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+    .site-nav ul {
+        gap: 0.8em;
     }
 }
