@@ -51,6 +51,11 @@
             margin-top: 30px;
         }
 
+        .social-links h3 {
+            color: #ddd;
+            margin-bottom: 10px;
+        }
+
         .social-links a {
             display: inline-block;
             margin: 0 15px;
@@ -141,20 +146,18 @@
     <div class="player-container" id="player">
         <h1>Escúchanos en vivo</h1>
         <p>Si quieres estar al tanto de todo lo que tenemos para ti, ¡escúchanos!</p>
-        <div class="audio-player">
-            <audio id="audio" controls autoplay>
-                Tu navegador no soporta el elemento de audio.
-            </audio>
-            <div class="track-info" id="track-info">Cargando información...</div>
-            <div class="controls">
-                <button onclick="lowerVolume()" aria-label="Bajar volumen">Bajar Volumen</button>
-                <button onclick="raiseVolume()" aria-label="Subir volumen">Subir Volumen</button>
-            </div>
-            <div class="volume-display" id="volume-display">Volumen: 20%</div>
+    <div class="audio-player">
+        <audio id="audio" controls autoplay>
+            Tu navegador no soporta el elemento de audio.
+        </audio>
+        <div class="track-info" id="track-info">Escuchando Latina Live</div>
+        <div class="controls">
+            <button onclick="lowerVolume()" aria-label="Bajar volumen">Bajar Volumen</button>
+            <button onclick="raiseVolume()" aria-label="Subir volumen">Subir Volumen</button>
         </div>
+        <div class="volume-display" id="volume-display">Volumen: 20%</div>
     </div>
 
-    <script src="https://kit.fontawesome.com/your_fontawesome_kit.js" crossorigin="anonymous"></script>
     <script>
         const audio = document.getElementById('audio');
         const trackInfo = document.getElementById('track-info');
@@ -191,4 +194,22 @@
 
                 // Extraer datos de la canción actual
                 const songTitle = data.now_playing.song.title || "Sin información";
-                const songArtist =
+                const songArtist = data.now_playing.song.artist || "Desconocido";
+
+                // Actualizar información en la página
+                trackInfo.textContent = `Escuchando: ${songArtist} - ${songTitle}`;
+            } catch (error) {
+                trackInfo.textContent = "No se pudo obtener los metadatos";
+                console.error("Error al obtener los metadatos:", error);
+            }
+        }
+
+        // Actualizar los metadatos cada 15 segundos
+        setInterval(fetchMetadata, 15000);
+
+        // Cargar los metadatos al iniciar el reproductor
+        window.addEventListener('load', fetchMetadata);
+        updateVolumeDisplay();
+    </script>
+</body>
+</html>
