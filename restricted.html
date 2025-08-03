@@ -2,23 +2,77 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Área protegida</title>
+  <title>Contenido Protegido - Latina Live</title>
+  <style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: sans-serif;
+    }
+
+    th, td {
+      border: 1px solid #999;
+      padding: 8px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f4f4f4;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    caption {
+      caption-side: top;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-align: left;
+    }
+  </style>
 </head>
 <body>
-  <h2>Contenido solo para locutores</h2>
-  <p>Bienvenido al panel interno.</p>
+  <h1>Listado de Locutores</h1>
 
-  <script type="module">
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-    import { auth } from "./scripts/init.js";
+  <table id="tablaDatos" aria-label="Tabla de locutores Latina Live">
+    <caption>Contenido actualizado desde Google Sheets</caption>
+    <thead></thead>
+    <tbody></tbody>
+  </table>
 
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "entrar.html";
-      } else {
-        console.log("Acceso autorizado:", user.email);
-      }
-    });
+  <script>
+    fetch("https://opensheet.elk.sh/11qEijrbs5kI-rlFUG-fd0vFgm5UhFPTSliYDnRrt_f8/Hoja1")
+      .then(res => res.json())
+      .then(data => {
+        if (!data.length) return;
+
+        const tabla = document.getElementById("tablaDatos");
+        const encabezados = Object.keys(data[0]);
+
+        const thead = tabla.querySelector("thead");
+        const filaEncabezados = document.createElement("tr");
+        encabezados.forEach(col => {
+          const th = document.createElement("th");
+          th.textContent = col;
+          filaEncabezados.appendChild(th);
+        });
+        thead.appendChild(filaEncabezados);
+
+        const tbody = tabla.querySelector("tbody");
+        data.forEach(fila => {
+          const tr = document.createElement("tr");
+          encabezados.forEach(col => {
+            const td = document.createElement("td");
+            td.textContent = fila[col];
+            tr.appendChild(td);
+          });
+          tbody.appendChild(tr);
+        });
+      })
+      .catch(error => {
+        console.error("Error al cargar la hoja de cálculo:", error);
+      });
   </script>
 </body>
 </html>
