@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Área protegida</title>
+</head>
+<body>
+  <h2>Contenido solo para locutores</h2>
+  <p>Bienvenido al panel interno.</p>
+
+  <script type="module">
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+    import { auth } from "./scripts/init.js";
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "entrar.html";
+      } else {
+        console.log("Acceso autorizado:", user.email);
+      }
+    });
+  </script>
+</body>
+</html>
