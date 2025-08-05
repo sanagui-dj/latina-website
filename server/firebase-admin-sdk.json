@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "latina-live-form",
+  "private_key_id": "669c92f41281ef7db1b46c55b86d3919471e74eb",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC/CngcWNXTPUOJ\ndYY240IMN8ESzUr9TTmHggtFij7gLY3rAs5ZOI37hP7p5RPHmGljgoPBWSNh9GK6\nZqMpu373oedD1nZPJDqQ7hW8VZd1DOoHzzOvk7+euyHXN/m689oAniD1DSNpVQT9\nGHljUYRuU6IdmwQr45YqAjMM0HoNfBmezeDiUA5R2D1O9No11u+cm9lU6WKu0LS0\nJrhfqHL4eZdtt3fwTeQUv3kMM20da6tMK4OP0pQPuV8dpGMq/7dhPNEws87xg/F1\n+PnfmRzFAtFqNC55/99fw9ziUaU98QQp1OOP3iAOEJKvi7QBLTEpq9kSKhOiCIt8\naDWRnu9rAgMBAAECggEARc2DeYgUCO0XokAo3CFJXsF4cHBGeCshXBvuFmie9LZw\nZnBOCVeauU4s/jVPdtx/lXZ4wcraHM54zHb4IyV5DO5BXA4eiGhKZe44TupPPtuL\nH3NcBUlM+KiTgtnXC7JR82vTyvYT/EauXfP1Vo7QfqdcUsjzSz4K/ipzkLkT/5y4\ny6gB+Kw07NJH13V9kNLy0QVWDpX6GPeIhXhLdcY6GE+X/izutz0su5783opmGvJU\na9/f9FrulbbGvb1+iggK3wlxNvf8QekZuJC0d3q9pxuVP711NAeLrQqUovR0OvWq\nY5kCjzomv/U6lpxmGAJuJ6wgwOzBI3guJOiLEExFoQKBgQDoFC9BJN2WELs1lbsH\nma3tRdwmYsfZhG5KxB19BdLIuvhJCr8EAe05VQlbdL7ohEwCTArX/biy/I7FRhFg\nNnnK20Fkyy5syFl8QhPqivpJiykXpoRZ0ziwRQzuKYLhcaOyL0SPIiLNRyWpyc0l\n79eKauiEp9rni1/zheKHpborCQKBgQDSu2zENaFdEUqmrQurq8jW2W45ZKZOp+W+\nfZKODbhUwGJdL14BUyZGSlSL/TIkn7RafFRJbWwlGozCHoPvRJcl0GhWeef1zP9Q\nYy+bHtVK/CxW986nElyJWWF+5uT3rPq1lNZaMvfKUcpRj7HjvSD8so0aE1A9mPbg\nDK/44DR/0wKBgDO+bFrF8XHIATWNUMn9Bb5lWRRl6dEhqcWZvElnxvtiVIFUmAo4\ns7+YqiFuAjKtbJUGh1RpCYk+rkZlvPIKs1T7VbU3Z/5xHSKLSQ1+Nxe2o07WnaO5\naGZEvwFK2BeT0r+jslGHduL1/fvBNrBCrXf7JiSNmE0P0jDlpQBBfyShAoGAbRxI\nM8uE8lg6q9Rbf5ahlcTc0nCvv3gld50zHcQy1gcKpy8YYF06Kxjfb+A4b0gVrOhF\nCAPVA90cVoJQU7nS/OxMqcHS/a0X4PqKMqojTAEHwDvszwqtyRvzZC6PDUKOSSh4\nWBmdvS7eL57UP5O0mcKlVoP7fvlNkjJfhuAnrqsCgYEAjgp036VDd+0/Sl4SLq9e\naY8CPQdyBE8Oajqd+cjLALcMq9yBNlmt5y1tTGmdxshP2G+0Vw8zGyYYSMq9t4Qf\nGlY1NKDby+tKPj2U3D9c7wsLH6zj9dbrT7tFFnp6wNtfOho4u88Q+coXnfiGzHWz\njz79ZnhaLfZu04I8Nf44+pQ=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@latina-live-form.iam.gserviceaccount.com",
+  "client_id": "103759612213684879642",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40latina-live-form.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
