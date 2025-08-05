@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel de Notificaciones - Latina Live</title>
+</head>
+<body>
+  <h1>Enviar Notificación Push</h1>
+
+  <form id="notif-form">
+    <label for="title">Título:</label><br>
+    <input type="text" id="title" name="title" required><br><br>
+
+    <label for="body">Mensaje:</label><br>
+    <textarea id="body" name="body" required></textarea><br><br>
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <div id="status" aria-live="polite"></div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
