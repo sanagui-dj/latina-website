@@ -1,6 +1,8 @@
 document.getElementById("notif-form").addEventListener("submit", async function (e) {
   e.preventDefault();
 
+  // Obtenemos también el valor del campo 'topic'
+  const topic = document.getElementById("topic").value.trim();
   const title = document.getElementById("title").value.trim();
   const body = document.getElementById("body").value.trim();
 
@@ -13,13 +15,14 @@ document.getElementById("notif-form").addEventListener("submit", async function 
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ title, body })
+      // Enviamos el 'topic' junto con el título y el cuerpo
+      body: JSON.stringify({ topic, title, body })
     });
 
     const result = await response.json();
 
     if (response.ok) {
-      statusDiv.textContent = "✅ Notificación enviada correctamente.";
+      statusDiv.textContent = `✅ Notificación enviada correctamente a '${topic}'.`;
     } else {
       statusDiv.textContent = `❌ Error: ${result.error || 'No se pudo enviar'}`;
     }
