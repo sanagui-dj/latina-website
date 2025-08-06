@@ -9,7 +9,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     console.log("Bienvenido:", userCredential.user.email);
-    window.location.href = "restricted.html";
+    window.location.href = "/restricted/";
   } catch (error) {
     alert("Error: " + error.message);
   }
