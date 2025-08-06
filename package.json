@@ -4,8 +4,8 @@
   "description": "¡Bienvenido a Latina Live! Este es un sitio web de radio en línea con una mezcla vibrante de música latina.",
   "main": "index.js",
   "scripts": {
-    "start": "npx @11ty/eleventy --serve",
-    "build": "npx @11ty/eleventy",
+    "start": "eleventy --serve",
+    "build": "eleventy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
