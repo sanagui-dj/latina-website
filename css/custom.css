@@ -1,128 +1,91 @@
 /* --- css/custom.css --- */
+/* Hoja de Estilos Personalizada y Unificada para Latina Live */
 
-/* Regla 1: Colores de fondo y texto principal */
-/* Abordamos: "Fondos azules" y "letras negras para el texto" */
+/* === CONFIGURACIÓN GLOBAL DE LA PÁGINA (body) === */
+/* Aquí combinamos los colores de fondo y el tamaño de fuente base. */
 body {
-  /* Usamos el azul más oscuro y vibrante para el fondo */
-  background-color: #2b9ece; 
-  /* Aseguramos que todo el texto por defecto sea negro, para máximo contraste */
-  color: black;
+  /* --- Color y Fondo --- */
+  background-color: #2b9ece; /* Fondo azul oscuro y vibrante */
+  color: #000000;             /* Texto principal en negro puro para máximo contraste */
+  
+  /* --- Tamaño de Fuente Base --- */
+  font-size: 1.15rem; /* ~18.4px, un tamaño cómodo para la lectura */
 }
 
-/* Regla 2: Colores para los Títulos */
-/* Abordamos: "letras amarillas para títulos" */
+/* === TIPOGRAFÍA: TÍTULOS Y JERARQUÍA === */
+/* Mantenemos el amarillo brillante para los títulos, ya que se leen bien */
 h1, h2, h3, h4, h5, h6 {
-  /* Usamos el amarillo más brillante para que destaque sobre el fondo azul */
   color: #ffd500;
 }
 
-/* Regla 3: Estilos para los Enlaces (Links) */
-/* Abordamos: "Los enlaces pueden hacerse con los amarillos" y el problema del "link para reproductores externos" */
+/* Ajustamos los tamaños de fuente para que sean proporcionales al nuevo texto base */
+h1, .h1 { font-size: 2.5rem; }
+h2, .h2 { font-size: 2rem; }
+h3, .h3 { font-size: 1.75rem; }
+h4, .h4 { font-size: 1.5rem; }
+
+
+/* === ESTILOS PARA ENLACES (Links) === */
+/* Abordamos la sugerencia de usar un color más legible que el amarillo brillante */
 a {
-  /* Usamos el amarillo un poco más oscuro para los enlaces, como se sugirió */
-  color: #fbba00;
-  /* Añadimos un subrayado para que los enlaces sean identificables no solo por color, una práctica de accesibilidad clave */
-  text-decoration: underline;
+  color: #f7a600; /* Amarillo anaranjado (#f7a600) para un contraste mucho mejor */
+  text-decoration: underline; /* Mantenemos el subrayado por accesibilidad */
 }
 
 a:hover {
-  /* Al pasar el cursor, usamos el naranja sugerido para un efecto claro */
-  color: #df6c02; 
+  color: #df6c02; /* Naranja oscuro al pasar el cursor para un feedback claro */
 }
 
-/* Regla 4: Estilos para los Botones */
-/* Abordamos: "El texto de los botones está en gris oscuro, no se leen." */
+
+/* === ESTILOS PARA BOTONES === */
+/* Combinamos todas las reglas de los botones en un solo lugar */
 button, input[type="submit"] {
-  /* Fondo amarillo brillante para que el botón sea muy visible */
-  background-color: #ffd500;
-  
-  /* Texto MUY oscuro, casi negro, para el máximo contraste posible sobre el amarillo. */
-  /* Esto es mucho más legible que un gris claro. */
-  color: #212121;
-  
-  /* Quitamos los bordes que vienen por defecto para un look más limpio */
+  /* --- Apariencia --- */
+  background-color: #ffd500; /* Fondo amarillo brillante para que destaquen */
   border: none;
-  border-radius: 5px; /* Bordes redondeados para un toque moderno */
-  padding: 10px 15px; /* Hacemos los botones un poco más grandes y fáciles de pulsar */
-  font-weight: bold; /* Texto en negrita para que resalte aún más */
+  border-radius: 5px;
+  padding: 10px 15px;
   cursor: pointer;
+
+  /* --- Texto del Botón --- */
+  color: #212121; /* Texto muy oscuro para máximo contraste sobre el amarillo */
+  font-weight: bold;
+  font-size: 1rem; /* Tamaño de fuente estándar y legible */
 }
 
 button:hover, input[type="submit"]:hover {
-  /* Oscurecemos ligeramente el fondo al pasar el ratón para dar feedback visual */
-  background-color: #fbba00;
+  background-color: #fbba00; /* Un amarillo ligeramente más oscuro al pasar el ratón */
 }
 
-/* Regla 5: Corrección para el fondo gris oscuro de Sakura en modo oscuro */
-/* Abordamos: "El fondo gris es muy oscuro" */
-/* Al definir un background-color en el body, esta regla ya no debería ser un problema, */
-/* pero la añadimos por seguridad para cualquier elemento que pudiera heredar ese gris. */
-/* Esta regla asegura que secciones o contenedores tengan un fondo azul claro. */
+
+/* === ESTILOS PARA SECCIONES Y CONTENEDORES === */
+/* Aseguramos que las áreas principales tengan un fondo diferenciado y agradable */
 section, aside, main {
-    background-color: #5bc5f2; /* El azul más claro para las áreas de contenido */
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-}
-/* --- INICIO DE REGLAS DE TAMAÑO DE FUENTE --- */
-
-/* REGLA 1: Aumentar el texto principal de toda la página */
-/* --------------------------------------------------- */
-/* Esta es la regla más importante. Afecta a los párrafos (<p>), 
-   listas (<li>), etc. La base de Sakura es de 1rem (16px), 
-   así que vamos a aumentarla un poco para que sea más cómoda. */
-
-body {
-  font-size: 1.15rem; /* Equivale a unos 18.4px, un tamaño muy legible para el cuerpo del texto. */
+  background-color: #5bc5f2; /* Azul más claro para las áreas de contenido */
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
 }
 
-/* REGLA 2: Ajustar los títulos para mantener la jerarquía */
-/* --------------------------------------------------------- */
-/* Ahora que el texto base es más grande, podemos ajustar 
-   ligeramente los títulos para que sigan viéndose proporcionados. */
 
-h1, .h1 {
-  font-size: 2.5rem; /* Título principal, muy grande y claro. */
-}
+/* === AJUSTES FINOS PARA COMPONENTES ESPECÍFICOS === */
 
-h2, .h2 {
-  font-size: 2rem; /* Subtítulos principales. */
-}
-
-h3, .h3 {
-  font-size: 1.75rem; /* Títulos de sección, como "Pide tu canción!". */
-}
-
-h4, .h4 {
-  font-size: 1.5rem; /* Subtítulos de sección. */
-}
-
-/* REGLA 3: Asegurar la legibilidad en componentes específicos */
-/* ------------------------------------------------------------- */
-/* A veces, elementos específicos como el reproductor o el footer 
-   pueden tener tamaños de letra más pequeños que necesitan un ajuste. */
-
-/* Texto del reproductor: "Escuchando: Artista - Título" */
+/* --- Reproductor de Audio --- */
+/* Texto "Escuchando: ..." */
 #track-info {
-  font-size: 1rem; /* Aseguramos que no sea más pequeño que el estándar. */
-  font-style: italic; /* Le damos un estilo cursivo para diferenciarlo. */
+  font-size: 1rem;
+  font-style: italic;
+  color: #000000; /* Aseguramos que sea negro y legible */
 }
 
-/* Texto del reproductor: "Volumen: 20%" */
+/* Texto "Volumen: ..." */
 #volume-display {
-  font-size: 0.9rem; /* Un poco más pequeño, ya que es información secundaria. */
+  font-size: 0.9rem;
+  color: #403e3e; /* Usamos un gris oscuro, como se sugirió, para información secundaria */
 }
 
-/* Texto del footer */
+/* --- Pie de página --- */
 .site-footer p {
   font-size: 1rem;
+  color: #000000;
 }
-
-/* REGLA 4: Tamaño del texto en los botones */
-/* ------------------------------------------- */
-/* Aseguramos que el texto dentro de los botones sea claro y fácil de leer. */
-button, input[type="submit"] {
-    font-size: 1rem; /* Un tamaño estándar y robusto. */
-}
-
-/* --- FIN DE REGLAS DE TAMAÑO DE FUENTE --- */
