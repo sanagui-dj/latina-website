@@ -172,6 +172,41 @@
         } // Fin del if(audio)
 
     });
+async function loadNewReleases() {
+  const container = document.getElementById('new-releases-container');
+  try {
+    // Llamamos a NUESTRA PROPIA función en Render. La ruta es /.netlify/functions/nombre-archivo
+    // Render usa la convención de Netlify para esto.
+    const response = await fetch('/.netlify/functions/get-new-releases');
+    const albums = await response.json();
+
+    // Limpiamos el mensaje de "Cargando..."
+    container.innerHTML = ''; 
+
+    // Creamos el HTML para cada álbum
+    albums.forEach(album => {
+      const albumElement = document.createElement('div');
+      albumElement.style.marginBottom = '15px'; // Un poco de estilo
+      albumElement.innerHTML = `
+        <a href="${album.external_urls.spotify}" target="_blank" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+          <img src="${album.images[1].url}" alt="${album.name}" width="64" height="64" style="margin-right: 10px;">
+          <div>
+            <strong>${album.name}</strong><br>
+            <span>${album.artists.map(artist => artist.name).join(', ')}</span>
+          </div>
+        </a>
+      `;
+      container.appendChild(albumElement);
+    });
+
+  } catch (error) {
+    container.innerHTML = '<p>No se pudieron cargar las novedades. Inténtalo más tarde.</p>';
+    console.error('Error al cargar el widget de Spotify:', error);
+  }
+}
+
+// Llamamos a la función cuando la página cargue
+loadNewReleases();
     </script>
 </body>
 </html>```
