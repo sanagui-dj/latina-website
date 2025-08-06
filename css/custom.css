@@ -64,3 +64,65 @@ section, aside, main {
     border-radius: 8px;
     margin-bottom: 20px;
 }
+/* --- INICIO DE REGLAS DE TAMAÑO DE FUENTE --- */
+
+/* REGLA 1: Aumentar el texto principal de toda la página */
+/* --------------------------------------------------- */
+/* Esta es la regla más importante. Afecta a los párrafos (<p>), 
+   listas (<li>), etc. La base de Sakura es de 1rem (16px), 
+   así que vamos a aumentarla un poco para que sea más cómoda. */
+
+body {
+  font-size: 1.15rem; /* Equivale a unos 18.4px, un tamaño muy legible para el cuerpo del texto. */
+}
+
+/* REGLA 2: Ajustar los títulos para mantener la jerarquía */
+/* --------------------------------------------------------- */
+/* Ahora que el texto base es más grande, podemos ajustar 
+   ligeramente los títulos para que sigan viéndose proporcionados. */
+
+h1, .h1 {
+  font-size: 2.5rem; /* Título principal, muy grande y claro. */
+}
+
+h2, .h2 {
+  font-size: 2rem; /* Subtítulos principales. */
+}
+
+h3, .h3 {
+  font-size: 1.75rem; /* Títulos de sección, como "Pide tu canción!". */
+}
+
+h4, .h4 {
+  font-size: 1.5rem; /* Subtítulos de sección. */
+}
+
+/* REGLA 3: Asegurar la legibilidad en componentes específicos */
+/* ------------------------------------------------------------- */
+/* A veces, elementos específicos como el reproductor o el footer 
+   pueden tener tamaños de letra más pequeños que necesitan un ajuste. */
+
+/* Texto del reproductor: "Escuchando: Artista - Título" */
+#track-info {
+  font-size: 1rem; /* Aseguramos que no sea más pequeño que el estándar. */
+  font-style: italic; /* Le damos un estilo cursivo para diferenciarlo. */
+}
+
+/* Texto del reproductor: "Volumen: 20%" */
+#volume-display {
+  font-size: 0.9rem; /* Un poco más pequeño, ya que es información secundaria. */
+}
+
+/* Texto del footer */
+.site-footer p {
+  font-size: 1rem;
+}
+
+/* REGLA 4: Tamaño del texto en los botones */
+/* ------------------------------------------- */
+/* Aseguramos que el texto dentro de los botones sea claro y fácil de leer. */
+button, input[type="submit"] {
+    font-size: 1rem; /* Un tamaño estándar y robusto. */
+}
+
+/* --- FIN DE REGLAS DE TAMAÑO DE FUENTE --- */
