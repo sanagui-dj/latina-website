@@ -5,6 +5,7 @@ module.exports = function(eleventyConfig) {
   // y cópiala EXACTAMENTE IGUAL dentro de la carpeta _site".
   eleventyConfig.addPassthroughCopy("scripts");
 eleventyConfig.addPassthroughCopy("css");
+eleventyConfig.addPassthroughCopy("stream.m3u");
   // El resto de la configuración que teníamos antes
   eleventyConfig.addWatchTarget("./_includes/");
   
