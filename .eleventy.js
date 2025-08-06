@@ -4,7 +4,7 @@ module.exports = function(eleventyConfig) {
   // "Cuando construyas el sitio, busca una carpeta llamada 'scripts'
   // y cópiala EXACTAMENTE IGUAL dentro de la carpeta _site".
   eleventyConfig.addPassthroughCopy("scripts");
-
+eleventyConfig.addPassthroughCopy("css");
   // El resto de la configuración que teníamos antes
   eleventyConfig.addWatchTarget("./_includes/");
   

@@ -1,0 +1,66 @@
+/* --- css/custom.css --- */
+
+/* Regla 1: Colores de fondo y texto principal */
+/* Abordamos: "Fondos azules" y "letras negras para el texto" */
+body {
+  /* Usamos el azul más oscuro y vibrante para el fondo */
+  background-color: #2b9ece; 
+  /* Aseguramos que todo el texto por defecto sea negro, para máximo contraste */
+  color: black;
+}
+
+/* Regla 2: Colores para los Títulos */
+/* Abordamos: "letras amarillas para títulos" */
+h1, h2, h3, h4, h5, h6 {
+  /* Usamos el amarillo más brillante para que destaque sobre el fondo azul */
+  color: #ffd500;
+}
+
+/* Regla 3: Estilos para los Enlaces (Links) */
+/* Abordamos: "Los enlaces pueden hacerse con los amarillos" y el problema del "link para reproductores externos" */
+a {
+  /* Usamos el amarillo un poco más oscuro para los enlaces, como se sugirió */
+  color: #fbba00;
+  /* Añadimos un subrayado para que los enlaces sean identificables no solo por color, una práctica de accesibilidad clave */
+  text-decoration: underline;
+}
+
+a:hover {
+  /* Al pasar el cursor, usamos el naranja sugerido para un efecto claro */
+  color: #df6c02; 
+}
+
+/* Regla 4: Estilos para los Botones */
+/* Abordamos: "El texto de los botones está en gris oscuro, no se leen." */
+button, input[type="submit"] {
+  /* Fondo amarillo brillante para que el botón sea muy visible */
+  background-color: #ffd500;
+  
+  /* Texto MUY oscuro, casi negro, para el máximo contraste posible sobre el amarillo. */
+  /* Esto es mucho más legible que un gris claro. */
+  color: #212121;
+  
+  /* Quitamos los bordes que vienen por defecto para un look más limpio */
+  border: none;
+  border-radius: 5px; /* Bordes redondeados para un toque moderno */
+  padding: 10px 15px; /* Hacemos los botones un poco más grandes y fáciles de pulsar */
+  font-weight: bold; /* Texto en negrita para que resalte aún más */
+  cursor: pointer;
+}
+
+button:hover, input[type="submit"]:hover {
+  /* Oscurecemos ligeramente el fondo al pasar el ratón para dar feedback visual */
+  background-color: #fbba00;
+}
+
+/* Regla 5: Corrección para el fondo gris oscuro de Sakura en modo oscuro */
+/* Abordamos: "El fondo gris es muy oscuro" */
+/* Al definir un background-color en el body, esta regla ya no debería ser un problema, */
+/* pero la añadimos por seguridad para cualquier elemento que pudiera heredar ese gris. */
+/* Esta regla asegura que secciones o contenedores tengan un fondo azul claro. */
+section, aside, main {
+    background-color: #5bc5f2; /* El azul más claro para las áreas de contenido */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
