@@ -59,10 +59,10 @@
     <!-- La cabecera se mantiene igual en todas las páginas -->
     <header class="welcome-section">
         <h2>¡Latina Live!</h2>
-        <img src="/logo.jpg" alt="Un micrófono encantador con una sonrisa cálida...">
-        <p>¡Bienvenido a tu apertura auditiva! ...</p>
-<p>La música es tan antigua como el hombre y tan importante como el oxígeno. Desde que el mundo es mundo hemos usado la música con diferentes finalidades: el placer, la motivación, las batallas, los rituales. Hombre y arte se necesitan para existir, el primero para admirarla y la segunda para ser sublimada en sus usos. Los esclavos, en sus danzas han ocultado tácticas para huir de sus captores, en sus peinados mapas y en sus ropas armas. La música es un legado, es historia, es cultura. Por esto estamos nosotros aquí, dispuestos a abrirte los oídos, a hacerte consciente de que si se viaja en cada libro, se visita en cada canción un trozo distinto de nosotros. Latina Live ha llegado para mostrarte tu alma, tu música, para llevarte por los pasadizos más oscuros de las melodías hasta los claros más dulces y reverdecidos de la misma. La pregunta no es si quieres escucharnos, la pregunta es: ¿Quieres escucharte a ti?
-</p>
+        <img src="/img/logo.jpg" alt="Un micrófono encantador con una sonrisa cálida...">
+        <p>¡Bienvenido a tu apertura auditiva!</p>
+        <p>La música es tan antigua como el hombre y tan importante como el oxígeno. Desde que el mundo es mundo hemos usado la música con diferentes finalidades: el placer, la motivación, las batallas, los rituales. Hombre y arte se necesitan para existir, el primero para admirarla y la segunda para ser sublimada en sus usos. Los esclavos, en sus danzas han ocultado tácticas para huir de sus captores, en sus peinados mapas y en sus ropas armas. La música es un legado, es historia, es cultura. Por esto estamos nosotros aquí, dispuestos a abrirte los oídos, a hacerte consciente de que si se viaja en cada libro, se visita en cada canción un trozo distinto de nosotros. Latina Live ha llegado para mostrarte tu alma, tu música, para llevarte por los pasadizos más oscuros de las melodías hasta los claros más dulces y reverdecidos de la misma. La pregunta no es si quieres escucharnos, la pregunta es: ¿Quieres escucharte a ti?
+        </p>
     </header>
 
     <!-- Aquí Eleventy inyectará el contenido de cada página -->
@@ -77,74 +77,61 @@
     <script src="https://kit.fontawesome.com/your_fontawesome_kit.js" crossorigin="anonymous"></script>
 
     <!-- ======================================================= -->
-    <!--  SCRIPT UNIFICADO Y MEJORADO PARA TODA LA APLICACIÓN   -->
+    <!--          INICIO DEL SCRIPT UNIFICADO                -->
     <!-- ======================================================= -->
     <script>
+    // Usamos DOMContentLoaded para asegurarnos de que todo el HTML está cargado
+    // antes de que intentemos manipularlo con JavaScript.
     document.addEventListener('DOMContentLoaded', function() {
         
         // --- LÓGICA DEL CAMBIADOR DE TEMA ---
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
 
-        // Función para aplicar el tema (claro u oscuro)
-        const applyTheme = (theme) => {
-            if (theme === 'dark') {
-                body.classList.remove('light');
-                body.classList.add('dark');
-                themeToggle.textContent = '☀️'; // Ícono de sol
-            } else {
-                body.classList.remove('dark');
-                body.classList.add('light');
-                themeToggle.textContent = '🌙'; // Ícono de luna
-            }
-        };
-
-        // Al cargar la página, aplicar el tema guardado en el navegador
-        const storedTheme = localStorage.getItem('theme') || 'light';
-        applyTheme(storedTheme);
-
-        // Cuando se hace clic en el botón, cambiar el tema y guardarlo
-        themeToggle.addEventListener('click', () => {
-            const newTheme = body.classList.contains('light') ? 'dark' : 'light';
-            applyTheme(newTheme);
-            localStorage.setItem('theme', newTheme);
-        });
-
+        if (themeToggle) {
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    body.classList.remove('light');
+                    body.classList.add('dark');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    body.classList.remove('dark');
+                    body.classList.add('light');
+                    themeToggle.textContent = '🌙';
+                }
+            };
+            const storedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(storedTheme);
+            themeToggle.addEventListener('click', () => {
+                const newTheme = body.classList.contains('light') ? 'dark' : 'light';
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        }
 
         // --- LÓGICA DEL REPRODUCTOR DE AUDIO ---
         const audio = document.getElementById('audio');
-        
-        // ¡IMPORTANTE! Este código SOLO se ejecuta si encuentra el reproductor en la página.
-        // Así no dará error en las páginas que no lo tengan (como contacto.html).
         if (audio) {
             const trackInfo = document.getElementById('track-info');
             const volumeDisplay = document.getElementById('volume-display');
             const lowerVolumeBtn = document.getElementById('lowerVolumeBtn');
             const raiseVolumeBtn = document.getElementById('raiseVolumeBtn');
-
             const streamUrl = "https://ahmrs.net/listen/latina/live";
             audio.src = streamUrl;
-            audio.volume = 0.2; // Volumen inicial
+            audio.volume = 0.2;
 
             function updateVolumeDisplay() {
-                if (volumeDisplay) {
-                    volumeDisplay.textContent = `Volumen: ${Math.round(audio.volume * 100)}%`;
-                }
+                if (volumeDisplay) volumeDisplay.textContent = `Volumen: ${Math.round(audio.volume * 100)}%`;
             }
 
             async function fetchMetadata() {
                 if (!trackInfo) return;
                 try {
-                    // Petición a la API más limpia
                     const response = await fetch('https://ahmrs.net/api/nowplaying/1');
                     if (!response.ok) throw new Error(`Error de red: ${response.status}`);
-                    
                     const data = await response.json();
-                    
-                    // Usamos optional chaining (?.) para evitar errores si la API no devuelve la info completa
                     const songTitle = data.now_playing?.song?.title || "Sin información";
                     const songArtist = data.now_playing?.song?.artist || "Desconocido";
-
                     trackInfo.textContent = `Escuchando: ${songArtist} - ${songTitle}`;
                 } catch (error) {
                     trackInfo.textContent = "Información de la canción no disponible.";
@@ -152,61 +139,64 @@
                 }
             }
 
-            // AÑADIMOS LOS EVENTOS A LOS BOTONES CON JAVASCRIPT
-            lowerVolumeBtn.addEventListener('click', () => {
+            if(lowerVolumeBtn) lowerVolumeBtn.addEventListener('click', () => {
                 audio.volume = Math.max(0, audio.volume - 0.1);
                 updateVolumeDisplay();
             });
-
-            raiseVolumeBtn.addEventListener('click', () => {
+            if(raiseVolumeBtn) raiseVolumeBtn.addEventListener('click', () => {
                 audio.volume = Math.min(1, audio.volume + 0.1);
                 updateVolumeDisplay();
             });
 
-            // Iniciar todo
             updateVolumeDisplay();
             fetchMetadata();
-            setInterval(fetchMetadata, 15000); // Actualizar cada 15 segundos
-            audio.play().catch(e => console.warn("La reproducción automática fue bloqueada. El usuario debe iniciarla manualmente.", e));
-        
-        } // Fin del if(audio)
+            setInterval(fetchMetadata, 15000);
+            audio.play().catch(e => console.warn("La reproducción automática fue bloqueada por el navegador.", e));
+        }
 
+        // --- LÓGICA DEL WIDGET DE NOVEDADES DE SPOTIFY ---
+        const releasesContainer = document.getElementById('new-releases-container');
+        // Solo ejecutamos la función si el contenedor del widget existe en la página actual
+        if (releasesContainer) {
+            async function loadNewReleases() {
+                try {
+                    // Llamamos a nuestra nueva API creada con Express
+                    const response = await fetch('/api/spotify-releases');
+                    if (!response.ok) {
+                        // Si la respuesta del servidor no es exitosa, lanzamos un error
+                        throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+                    }
+                    const albums = await response.json();
+                    
+                    // Si el servidor devolvió un error en el JSON, también lo manejamos
+                    if (albums.error) {
+                         throw new Error(`Error en la API: ${albums.error}`);
+                    }
+
+                    releasesContainer.innerHTML = ''; // Limpiamos el mensaje de "Cargando..."
+                    albums.forEach(album => {
+                        const albumElement = document.createElement('div');
+                        albumElement.style.marginBottom = '15px';
+                        albumElement.innerHTML = `
+                            <a href="${album.external_urls.spotify}" target="_blank" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
+                                <img src="${album.images[1]?.url || '/img/logo.jpg'}" alt="${album.name}" width="64" height="64" style="margin-right: 10px;">
+                                <div>
+                                    <strong>${album.name}</strong><br>
+                                    <span>${album.artists.map(artist => artist.name).join(', ')}</span>
+                                </div>
+                            </a>
+                        `;
+                        releasesContainer.appendChild(albumElement);
+                    });
+                } catch (error) {
+                    releasesContainer.innerHTML = '<p>No se pudieron cargar las novedades. Inténtalo más tarde.</p>';
+                    console.error('Error al cargar el widget de Spotify:', error);
+                }
+            }
+            // Llamamos a la función para cargar el widget
+            loadNewReleases();
+        }
     });
-async function loadNewReleases() {
-  const container = document.getElementById('new-releases-container');
-  try {
-    // Llamamos a NUESTRA PROPIA función en Render. La ruta es /.netlify/functions/nombre-archivo
-    // Render usa la convención de Netlify para esto.
-    const response = await fetch('/.netlify/functions/get-new-releases');
-    const albums = await response.json();
-
-    // Limpiamos el mensaje de "Cargando..."
-    container.innerHTML = ''; 
-
-    // Creamos el HTML para cada álbum
-    albums.forEach(album => {
-      const albumElement = document.createElement('div');
-      albumElement.style.marginBottom = '15px'; // Un poco de estilo
-      albumElement.innerHTML = `
-        <a href="${album.external_urls.spotify}" target="_blank" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-          <img src="${album.images[1].url}" alt="${album.name}" width="64" height="64" style="margin-right: 10px;">
-          <div>
-            <strong>${album.name}</strong><br>
-            <span>${album.artists.map(artist => artist.name).join(', ')}</span>
-          </div>
-        </a>
-      `;
-      container.appendChild(albumElement);
-    });
-
-  } catch (error) {
-    container.innerHTML = '<p>No se pudieron cargar las novedades. Inténtalo más tarde.</p>';
-    console.error('Error al cargar el widget de Spotify:', error);
-  }
-}
-
-// Llamamos a la función cuando la página cargue
-loadNewReleases();
     </script>
 </body>
-</html>```
+</html>
