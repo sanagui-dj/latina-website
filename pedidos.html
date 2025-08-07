@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos de Canciones (Prueba Aislada)</title>
+    <style>
+        /* Estilos básicos para que sea funcional */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; line-height: 1.6; background-color: #f0f2f5; color: #1c1e21; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        h1 { text-align: center; }
+        input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+        #results-container { min-height: 100px; border: 1px solid #eee; padding: 10px; }
+        .song-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
+        .song-info { flex-grow: 1; }
+        .request-btn { padding: 8px 16px; border: none; background-color: #1877f2; color: white; border-radius: 6px; cursor: pointer; }
+        .request-btn:disabled { background-color: #90949c; }
+        #status-message { text-align: center; padding: 10px; margin-bottom: 15px; border-radius: 4px; display: none; }
+        .status-success { background-color: #d4edda; color: #155724; }
+        .status-error { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/">← Volver al inicio</a>
+        <h1>Sistema de Pedidos</h1>
+        
+        <input type="text" id="search-box" placeholder="Busca tu canción o artista favorito...">
+        
+        <div id="status-message"></div>
+
+        <div id="results-container">
+            <p>Cargando lista de canciones...</p>
+        </div>
+    </div>
+
+    <!-- Cargamos un script dedicado SOLO para esta página -->
+    <script src="/scripts/pedidos-logic.js"></script>
+</body>
+</html>
