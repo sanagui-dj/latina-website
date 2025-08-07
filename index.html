@@ -41,15 +41,68 @@ title: Latina Live - tu alma, tu música
         <a href="../trends-suggestions/">Descúbrelo aquí 🔊</a>
     </section>
 
-    <section class="requests-section">
-        <h3>Pide tu canción</h3>
-        <p>Usa este formulario para enviarnos tus peticiones en cualquier momento.</p>
-<input type="text" id="search-box" placeholder="Busca por artista o título...">
-            <div id="status-message"></div>
-            <div id="results-container">
-                <p class="loading">Cargando canciones disponibles...</p>
-            </div>
-    <script src="../scripts/logica_pedidos.js"></script>
+<!-- === INICIO DEL WIDGET DE PEDIDOS DE CANCIONES === -->
+<section class="song-requests-widget">
+  
+  <h2>Pide tu Canción de la Lista</h2>
+  <p>Busca en nuestra lista de canciones disponibles y envíanos tu petición.</p>
+
+  <!-- Contenedor para la barra de búsqueda -->
+  <div class="search-container">
+    <input type="text" id="search-box" placeholder="Busca por artista o título...">
+  </div>
+  
+  <!-- Contenedor para mensajes de estado (éxito o error) -->
+  <div id="status-message"></div>
+
+  <!-- Contenedor donde se cargarán dinámicamente las canciones -->
+  <div id="results-container">
+    <p class="loading">Cargando canciones disponibles...</p>
+  </div>
+
+</section>
+<!-- === FIN DEL WIDGET DE PEDIDOS DE CANCIONES === -->
+
+<!-- Añadimos algunos estilos específicos para este widget, directamente aquí o en tu custom.css -->
+<style>
+  .song-requests-widget {
+    background-color: #5bc5f2; /* Mantenemos el color de sección */
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  .search-container input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #333;
+  }
+  .song-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+  .song-item:last-child { border-bottom: none; }
+  .song-info { display: flex; flex-direction: column; }
+  .song-title { font-weight: bold; }
+  .song-artist { font-size: 0.9em; }
+  .request-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  #status-message {
+    text-align: center;
+    padding: 10px;
+    margin: 0 0 15px 0;
+    border-radius: 4px;
+    display: none; /* Oculto por defecto */
+  }
+  .status-success { background-color: #d4edda; color: #155724; }
+  .status-error { background-color: #f8d7da; color: #721c24; }
+</style>
         <hr>
         <h4>¿Hay un locutor en vivo?</h4>
         <p>¡Pide tu canción favorita directamente al locutor que está al aire!</p>
