@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const songs = await response.json();
                 if (songs.error) throw new Error(songs.error);
 
-                allSongs = songs.filter(song => song.is_requestable);
+                //allSongs = songs.filter(song => song.is_requestable);
                 renderSongs(allSongs);
 
             } catch (error) {
