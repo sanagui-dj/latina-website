@@ -21,6 +21,7 @@
   "homepage": "https://github.com/sanagui-dj/latina-website#readme",
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2",
+    "concurrently": "^9.2.0",
     "serve": "^14.2.4"
   },
   "dependencies": {
