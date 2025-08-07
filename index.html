@@ -3,14 +3,14 @@ layout: base.njk
 title: Latina Live - tu alma, tu música
 ---
 
-<!-- 
-    Esto es todo. Solo pones el contenido que es ÚNICO de la página de inicio.
-    Eleventy se encargará de "envolverlo" con la plantilla base.njk.
--->
+<!-- ======================================================= -->
+<!--          CONTENIDO ÚNICO DE LA PÁGINA DE INICIO         -->
+<!-- ======================================================= -->
 
+<!-- El reproductor se queda como está, es el corazón del sitio -->
 <aside class="player-container" id="player">
-    <h1>sintonízate con nosotros!</h1>
-    <p>vibra en nuestra onda...</p>
+    <h1>¡Sintonízate con nosotros!</h1>
+    <p>Vibra en nuestra onda...</p>
     
     <div class="audio-player">
         <audio id="audio" controls autoplay>
@@ -26,98 +26,64 @@ title: Latina Live - tu alma, tu música
     </div>
 </aside>
 
+<!-- La navegación se queda como está -->
 <nav class="site-nav">
     <ul>
         <li><a href="/">Inicio</a></li>
-        <li><a href="/sociales.html">Redes Sociales</a></li>
-        <li><a href="/contact.html">Contacto</a></li>
+        <li><a href="/sociales/">Redes Sociales</a></li>
+        <li><a href="/contact/">Contacto</a></li>
     </ul>
 </nav>
 
+<!-- El contenido principal de la página -->
 <main>
-    <section class="trends-section">
-        <h3>Lo que nos gusta</h3>
-        <p>Tu día tiene la melodía perfecta. ¿Qué melodía será tu día hoy?</p>
-        <a href="../trends-suggestions/">Descúbrelo aquí 🔊</a>
-    </section>
 
-<!-- === INICIO DEL WIDGET DE PEDIDOS DE CANCIONES === -->
-<section class="song-requests-widget">
-  
-  <h2>Pide tu Canción de la Lista</h2>
-  <p>Busca en nuestra lista de canciones disponibles y envíanos tu petición.</p>
-
-  <!-- Contenedor para la barra de búsqueda -->
-  <div class="search-container">
-    <input type="text" id="search-box" placeholder="Busca por artista o título...">
-  </div>
-  
-  <!-- Contenedor para mensajes de estado (éxito o error) -->
-  <div id="status-message"></div>
-
-  <!-- Contenedor donde se cargarán dinámicamente las canciones -->
-  <div id="results-container">
-    <p class="loading">Cargando canciones disponibles...</p>
-  </div>
-
-</section>
-<!-- === FIN DEL WIDGET DE PEDIDOS DE CANCIONES === -->
-
-<!-- Añadimos algunos estilos específicos para este widget, directamente aquí o en tu custom.css -->
-<style>
-  .song-requests-widget {
-    background-color: #5bc5f2; /* Mantenemos el color de sección */
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-  }
-  .search-container input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box;
-    background-color: #fff;
-    color: #333;
-  }
-  .song-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-  }
-  .song-item:last-child { border-bottom: none; }
-  .song-info { display: flex; flex-direction: column; }
-  .song-title { font-weight: bold; }
-  .song-artist { font-size: 0.9em; }
-  .request-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-  #status-message {
-    text-align: center;
-    padding: 10px;
-    margin: 0 0 15px 0;
-    border-radius: 4px;
-    display: none; /* Oculto por defecto */
-  }
-  .status-success { background-color: #d4edda; color: #155724; }
-  .status-error { background-color: #f8d7da; color: #721c24; }
-</style>
+    <!-- MEJORA: Hemos unificado todas las formas de pedir canciones en una sola sección grande y clara -->
+    <section class="requests-section">
+        <h2>Pide tu Canción</h2>
+        <p>¡Queremos escucharte! Usa uno de los métodos a continuación para pedir tu tema favorito.</p>
+        
         <hr>
-        <h4>¿Hay un locutor en vivo?</h4>
-        <p>¡Pide tu canción favorita directamente al locutor que está al aire!</p>
-        <script type="text/javascript" src="https://form.jotform.com/jsform/252138587820058"></script>
+
+        <!-- El widget de pedidos de AzuraCast ahora es el método principal -->
+        <div class="song-requests-widget">
+          <h3>Pide de Nuestra Lista (Automático)</h3>
+          <p>Busca en nuestra lista de canciones disponibles y envíanos tu petición al instante.</p>
+        
+          <div class="search-container">
+            <input type="text" id="search-box" placeholder="Busca por artista o título...">
+          </div>
+          
+          <div id="status-message"></div>
+        
+          <div id="results-container">
+            <p class="loading">Cargando canciones disponibles...</p>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- Mantenemos el formulario de JotForm como una opción secundaria -->
+        <div>
+            <h3>¿Hay un Locutor en Vivo?</h3>
+            <p>¡Pide tu canción favorita directamente al locutor que está al aire usando este formulario!</p>
+            <script type="text/javascript" src="https://form.jotform.com/jsform/252138587820058"></script>
+        </div>
     </section>
-<section class="spotify-widget">
-  <h3>¡Últimos Lanzamientos en Spotify!</h3>
-  <div id="new-releases-container">
-    <!-- Los álbumes se cargarán aquí con JavaScript -->
-    <p>Cargando novedades...</p>
-  </div>
-</section>
+
+    <!-- El widget de Spotify se mantiene, es una gran funcionalidad -->
+    <section class="spotify-widget">
+      <h3>¡Últimos Lanzamientos en Spotify!</h3>
+      <div id="new-releases-container">
+        <p>Cargando novedades...</p>
+      </div>
+    </section>
+
+    <!-- La sección de apoyo se mantiene -->
     <section class="support-section">
         <h3>¡Sueña con nosotros! 📻</h3>
         <p>¿Te gusta nuestra sintonía? Ven con nosotros, el cielo solo es una parada; los sueños no tienen precio.</p>
         <a href="http://paypal.me/sanaguidj" class="donate-link">☁ ¡Pon tu peldaño nubal aquí! 🌠</a>
     </section>
+
 </main>
