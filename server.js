@@ -1,72 +1,122 @@
-// server.js (Versión de Depuración)
+// server.js (Versión Corregida y Robusta)
 
+// 1. Importar herramientas
 const express = require('express');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// 2. Servir archivos estáticos (tu web construida por Eleventy)
 app.use(express.static(path.join(__dirname, '_site')));
 
-// ... (El endpoint de Spotify se queda igual) ...
-app.get('/api/spotify-releases', async (req, res) => { /* ... */ });
+// ==========================================================
+// ENDPOINT DE API PARA SPOTIFY (CORREGIDO Y MEJORADO)
+// ==========================================================
+app.get('/api/spotify-releases', async (req, res) => {
+  console.log('[LOG] Petición recibida en /api/spotify-releases');
+  
+  const clientId = process.env.SPOTIFY_CLIENT_ID;
+  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
 
-
-// === ENDPOINT DE AZURACAST CON DEPURACIÓN ===
-
-app.get('/api/get-request-list/:stationId', async (req, res) => {
-  const stationId = req.params.stationId;
-  console.log(`[LOG] Petición recibida para la estación ID: ${stationId}`);
-
-  const azuracastUrl = process.env.AZURACAST_URL;
-  const apiKey = process.env.AZURACAST_API_KEY;
-
-  // 1. Verificamos si las variables de entorno se están leyendo bien
-  console.log(`[LOG] URL de AzuraCast: ${azuracastUrl}`);
-  // Mostramos solo una parte de la API Key por seguridad en los logs
-  console.log(`[LOG] API Key encontrada: ${apiKey ? 'Sí, empieza con ' + apiKey.substring(0, 4) + '...' : 'No, no encontrada'}`);
-
-  if (!stationId || !azuracastUrl || !apiKey) {
-    console.error("[ERROR] Configuración del servidor incompleta. Faltan variables de entorno.");
-    return res.status(500).json({ error: 'Configuración del servidor de AzuraCast incompleta.' });
+  if (!clientId || !clientSecret) {
+    console.error("[ERROR][Spotify] Claves de API no configuradas en las variables de entorno.");
+    return res.status(500).json({ error: 'Configuración de Spotify incompleta.' });
   }
 
-  const apiEndpoint = `${azuracastUrl}/api/station/${stationId}/requests`;
-  console.log(`[LOG] Construyendo petición a: ${apiEndpoint}`);
-
   try {
-    const response = await fetch(apiEndpoint, {
-      headers: { 'Authorization': `Bearer ${apiKey}` }
+    // --- PASO A: Obtener el token de acceso de Spotify ---
+    const tokenResponse = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': 'Basic ' + Buffer.from(clientId + ':' + clientSecret).toString('base64')
+      },
+      body: 'grant_type=client_credentials'
+    });
+    
+    const tokenData = await tokenResponse.json();
+    if (!tokenResponse.ok) {
+        // Lanzamos un error claro si la autenticación falla
+        throw new Error(`Error de autenticación con Spotify: ${tokenData.error_description || 'Credenciales inválidas'}`);
+    }
+    const accessToken = tokenData.access_token;
+
+    // --- PASO B: Pedir los nuevos lanzamientos usando el token ---
+    const releasesResponse = await fetch('https://api.spotify.com/v1/browse/new-releases?limit=10', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
     });
 
-    console.log(`[LOG] Respuesta de AzuraCast recibida con código de estado: ${response.status}`);
-
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error(`[ERROR] AzuraCast devolvió un error: ${response.status}. Respuesta: ${errorText}`);
-        throw new Error(`No se pudo obtener la lista de canciones. Código: ${response.status}`);
+    const releasesData = await releasesResponse.json();
+    if (!releasesResponse.ok) {
+        // Lanzamos un error si la petición de lanzamientos falla
+        throw new Error(`Error al obtener lanzamientos de Spotify: ${releasesData.error?.message || 'Respuesta inesperada'}`);
     }
-    
-    // 2. Vemos la respuesta cruda antes de convertirla a JSON
-    const responseText = await response.text();
-    console.log('[LOG] Respuesta de AzuraCast (texto crudo):', responseText.substring(0, 200) + '...'); // Mostramos los primeros 200 caracteres
 
-    // 3. Intentamos convertir la respuesta a JSON
-    const data = JSON.parse(responseText);
-    
-    console.log(`[LOG] Respuesta JSON procesada. Se encontraron ${data.length} canciones en total.`);
-    
-    // Devolvemos la respuesta al navegador
-    res.status(200).json(data);
+    // Enviamos solo los datos que necesitamos
+    res.status(200).json(releasesData.albums.items);
 
   } catch (error) {
-    console.error('[ERROR FATAL] Fallo en el bloque try/catch de get-request-list:', error.message);
-    res.status(500).json({ error: error.message });
+    console.error('[ERROR FATAL][Spotify]', error.message);
+    res.status(500).json({ error: 'Fallo al obtener los lanzamientos de Spotify.' });
   }
 });
 
-// ... (El endpoint POST y el app.listen se quedan igual) ...
-app.post('/api/send-song-request/:stationId/:requestId', async (req, res) => { /* ... */ });
 
+// ==========================================================
+// ENDPOINTS DE API PARA PEDIDOS DE AZURACAST (SIN CAMBIOS, YA FUNCIONABA)
+// =================================e=========================
+app.get('/api/get-request-list/:stationId', async (req, res) => {
+    // ... La lógica de AzuraCast que ya teníamos y que sabemos que funciona bien
+    const stationId = req.params.stationId;
+    const azuracastUrl = process.env.AZURACAST_URL;
+    const apiKey = process.env.AZURACAST_API_KEY;
+
+    if (!stationId || !azuracastUrl || !apiKey) {
+        return res.status(500).json({ error: 'Configuración de AzuraCast incompleta.' });
+    }
+
+    try {
+        const apiEndpoint = `${azuracastUrl}/api/station/${stationId}/requests`;
+        const response = await fetch(apiEndpoint, { headers: { 'Authorization': `Bearer ${apiKey}` } });
+
+        if (!response.ok) throw new Error(`Error de AzuraCast: ${response.status}`);
+        
+        const data = await response.json();
+        res.status(200).json(data);
+    } catch (error) {
+        console.error('[ERROR FATAL][AzuraCast]', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/send-song-request/:stationId/:requestId', async (req, res) => {
+    // ... La lógica de enviar el pedido, que también funciona bien
+    const { stationId, requestId } = req.params;
+    const azuracastUrl = process.env.AZURACAST_URL;
+    const apiKey = process.env.AZURACAST_API_KEY;
+
+    if (!stationId || !requestId || !azuracastUrl || !apiKey) {
+        return res.status(500).json({ error: 'Faltan parámetros.' });
+    }
+  
+    try {
+        const apiEndpoint = `${azuracastUrl}/api/station/${stationId}/request/${requestId}`;
+        const response = await fetch(apiEndpoint, { method: 'POST', headers: { 'Authorization': `Bearer ${apiKey}` } });
+
+        if (!response.ok) throw new Error(`Error al enviar el pedido: ${response.status}`);
+        
+        const data = await response.json();
+        res.status(200).json(data);
+    } catch (error) {
+        console.error('[ERROR FATAL][AzuraCast Request]', error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+
+// ==========================================================
+// INICIAR EL SERVIDOR
+// ==========================================================
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en el puerto ${PORT}`);
 });
