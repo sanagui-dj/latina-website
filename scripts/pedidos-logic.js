@@ -1,38 +1,35 @@
-// scripts/pedidos-logic.js (Versión Corregida)
+// scripts/pedidos-logic.js (Versión Final Funcional)
 
-// Asegurarnos de que el código se ejecuta solo cuando el DOM está listo
 document.addEventListener('DOMContentLoaded', () => {
     
     // --- CONFIGURACIÓN ---
     const STATION_ID = 1; // Revisa que este sea tu ID de estación
 
     // --- ELEMENTOS DEL DOM ---
-    // Usamos 'const' porque estas variables no cambiarán
     const searchBox = document.getElementById('search-box');
     const resultsContainer = document.getElementById('results-container');
     const statusMessage = document.getElementById('status-message');
     
-    // Usamos 'let' porque el contenido de este array cambiará
     let allSongs = [];
 
     // --- FUNCIONES ---
 
     function showStatus(message, isSuccess = true) {
-        if (!statusMessage) return; // Salir si el elemento no existe
+        if (!statusMessage) return;
         statusMessage.textContent = message;
         statusMessage.className = isSuccess ? 'status-success' : 'status-error';
         statusMessage.style.display = 'block';
         setTimeout(() => {
             statusMessage.style.display = 'none';
-        }, 5000); // Ocultar después de 5 segundos
+        }, 5000);
     }
 
     function renderSongs(songs) {
-        if (!resultsContainer) return; // Salir si el elemento no existe
-        resultsContainer.innerHTML = ''; // Limpiar
+        if (!resultsContainer) return;
+        resultsContainer.innerHTML = '';
         
         if (!songs || songs.length === 0) {
-            resultsContainer.innerHTML = '<p>Lo sentimos, no hay canciones disponibles para pedir en este momento.</p>';
+            resultsContainer.innerHTML = '<p>Lo sentimos, no hay canciones disponibles en la lista.</p>';
             return;
         }
 
@@ -52,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function fetchSongs() {
         if (!resultsContainer) return;
-        resultsContainer.innerHTML = '<p>Contactando al servidor de la radio...</p>';
+        resultsContainer.innerHTML = '<p>Cargando lista de canciones...</p>';
 
         try {
             const response = await fetch(`/api/get-request-list/${STATION_ID}`);
@@ -65,23 +62,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(songs.error);
             }
 
-            // Filtramos las canciones que AzuraCast nos dice que se pueden pedir
-            const requestableSongs = songs.filter(song => song.is_requestable);
-            
-            allSongs = requestableSongs;
+            // ===================================================================
+            // MODIFICACIÓN CLAVE:
+            // Asignamos TODAS las canciones directamente, sin filtrar por 'is_requestable'.
+            // Esto replicará el comportamiento del iframe de AzuraCast.
+            allSongs = songs;
+            // ===================================================================
+
             renderSongs(allSongs);
 
         } catch (error) {
             console.error('ERROR EN fetchSongs:', error);
             if (resultsContainer) {
-                resultsContainer.innerHTML = `<p style="color: red;">No se pudo cargar la lista de canciones. Por favor, revisa la consola (F12) para ver el error técnico.</p>`;
+                resultsContainer.innerHTML = `<p style="color: red;">No se pudo cargar la lista de canciones. Por favor, inténtalo de nuevo más tarde.</p>`;
             }
         }
     }
 
     async function requestSong(event) {
         if (!event.target.classList.contains('request-btn')) {
-            return; // Salir si no se hizo clic en un botón de pedir
+            return;
         }
         
         const button = event.target;
@@ -92,7 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`/api/send-song-request/${STATION_ID}/${requestId}`, { method: 'POST' });
             if (!response.ok) {
-                throw new Error('El servidor devolvió un error al enviar el pedido.');
+                const errorData = await response.json();
+                // Usamos el mensaje de error de AzuraCast si está disponible
+                throw new Error(errorData.message || 'El servidor devolvió un error.');
             }
             
             const result = await response.json();
@@ -103,17 +105,17 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.success) {
                 showStatus(result.message || '¡Tu pedido se ha enviado con éxito!', true);
             } else {
+                // Si success es false, AzuraCast suele enviar un mensaje explicando por qué
                 throw new Error(result.message || 'No se pudo enviar el pedido en este momento.');
             }
         } catch (error) {
             console.error('Error al enviar la petición:', error);
             showStatus(error.message, false);
         } finally {
-            // Habilitamos el botón de nuevo después de un cooldown
             setTimeout(() => {
                 button.disabled = false;
                 button.textContent = 'Pedir';
-            }, 60000); // 60 segundos
+            }, 60000);
         }
     }
 
@@ -127,8 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // --- EVENT LISTENERS ---
-
-    // Asegurarnos de que los elementos existen antes de añadir listeners
     if (searchBox) {
         searchBox.addEventListener('input', filterSongs);
     }
@@ -137,6 +137,5 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsContainer.addEventListener('click', requestSong);
     }
 
-    // Cargar las canciones al iniciar
     fetchSongs();
 });
