@@ -77,7 +77,7 @@
     <script src="https://kit.fontawesome.com/your_fontawesome_kit.js" crossorigin="anonymous"></script>
 
 <!-- ======================================================= -->
-<!--          INICIO DEL SCRIPT UNIFICADO FINAL              -->
+<!--          INICIO DEL SCRIPT UNIFICADO                -->
 <!-- ======================================================= -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
@@ -156,12 +156,22 @@ document.addEventListener('DOMContentLoaded', function() {
     if (releasesContainer) {
         async function loadNewReleases() {
             try {
-                const response = await fetch('/api/spotify-releases');
+                // Truco anti-caché para asegurar datos frescos
+                const cacheBuster = new Date().getTime();
+                const response = await fetch(`/api/spotify-releases?t=${cacheBuster}`);
+
                 if (!response.ok) throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
+                
                 const albums = await response.json();
                 if (albums.error) throw new Error(`Error en la API: ${albums.error}`);
 
                 releasesContainer.innerHTML = '';
+                
+                if (albums.length === 0) {
+                    releasesContainer.innerHTML = '<p>No hay novedades disponibles en este momento.</p>';
+                    return;
+                }
+                
                 albums.forEach(album => {
                     const albumElement = document.createElement('div');
                     albumElement.style.marginBottom = '15px';
@@ -181,114 +191,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error al cargar el widget de Spotify:', error);
             }
         }
+        // Llamamos a la función para cargar el widget
         loadNewReleases();
     }
-
-
-    // ==============================================================
-    // --- LÓGICA DEL NUEVO WIDGET DE PEDIDOS DE CANCIONES (AZURACAST) ---
-    // ==============================================================
-    const requestsWidgetContainer = document.querySelector('.song-requests-widget');
-    if (requestsWidgetContainer) {
-        
-        const STATION_ID = 1; // ¡ASEGÚRATE DE QUE ESTE ID ES EL CORRECTO!
-
-        const searchBox = requestsWidgetContainer.querySelector('#search-box');
-        const resultsContainer = requestsWidgetContainer.querySelector('#results-container');
-        const statusMessage = requestsWidgetContainer.querySelector('#status-message');
-        let allSongs = [];
-
-        function showStatus(message, isSuccess = true) {
-            if (!statusMessage) return;
-            statusMessage.textContent = message;
-            statusMessage.className = isSuccess ? 'status-success' : 'status-error';
-            statusMessage.style.display = 'block';
-            setTimeout(() => { statusMessage.style.display = 'none'; }, 5000);
-        }
-
-        function renderSongs(songs) {
-            if (!resultsContainer) return;
-            resultsContainer.innerHTML = '';
-            if (!songs || songs.length === 0) {
-                resultsContainer.innerHTML = '<p>No se encontraron canciones con ese criterio.</p>';
-                return;
-            }
-
-            songs.forEach(song => {
-                const songDiv = document.createElement('div');
-                songDiv.className = 'song-item';
-                songDiv.innerHTML = `
-                    <div class="song-info">
-                        <span class="song-title">${song.song.title}</span>
-                        <span class="song-artist">${song.song.artist}</span>
-                    </div>
-                    <button class="request-btn" data-request-id="${song.request_id}">Pedir</button>
-                `;
-                resultsContainer.appendChild(songDiv);
-            });
-        }
-
-        async function fetchSongs() {
-            try {
-                const response = await fetch(`/api/get-request-list/${STATION_ID}`);
-                if (!response.ok) throw new Error(`El servidor respondió con un error: ${response.status}`);
-                const songs = await response.json();
-                if (songs.error) throw new Error(songs.error);
-
-                //allSongs = songs.filter(song => song.is_requestable);
-                renderSongs(allSongs);
-
-            } catch (error) {
-                console.error('Error al cargar la lista de canciones:', error);
-                if (resultsContainer) resultsContainer.innerHTML = `<p style="color: red;">Error al cargar canciones. Revisa la consola para más detalles.</p>`;
-            }
-        }
-
-        async function requestSong(event) {
-            if (!event.target.classList.contains('request-btn')) return;
-            
-            const button = event.target;
-            const requestId = button.dataset.requestId;
-            button.disabled = true;
-            button.textContent = 'Enviando...';
-
-            try {
-                const response = await fetch(`/api/send-song-request/${STATION_ID}/${requestId}`, { method: 'POST' });
-                if (!response.ok) throw new Error('El servidor devolvió un error al enviar el pedido.');
-                
-                const result = await response.json();
-                if (result.error) throw new Error(result.error);
-
-                if (result.success) {
-                    showStatus(result.message || '¡Pedido enviado con éxito!', true);
-                } else {
-                    throw new Error(result.message || 'No se pudo enviar el pedido.');
-                }
-            } catch (error) {
-                console.error('Error al enviar la petición:', error);
-                showStatus(error.message, false);
-            } finally {
-                setTimeout(() => {
-                    button.disabled = false;
-                    button.textContent = 'Pedir';
-                }, 60000);
-            }
-        }
-        
-        function filterSongs() {
-            const query = searchBox.value.toLowerCase().trim();
-            const filteredSongs = allSongs.filter(song => 
-                song.song.title.toLowerCase().includes(query) || 
-                song.song.artist.toLowerCase().includes(query)
-            );
-            renderSongs(filteredSongs);
-        }
-
-        fetchSongs();
-        resultsContainer.addEventListener('click', requestSong);
-        searchBox.addEventListener('input', filterSongs);
-    }
-
 });
 </script>
 </body>
