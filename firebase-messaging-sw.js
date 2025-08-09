@@ -1,8 +1,8 @@
-// firebase-messaging-sw.js
+// firebase-messaging-sw.js (Firebase v12 modular)
 
-// Importar scripts de Firebase (modo compat para SW)
-importScripts('https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js');
-importScripts('https://www.gstatic.com/firebasejs/9.6.11/firebase-messaging-compat.js');
+// Importar solo lo necesario
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js';
+import { getMessaging, onBackgroundMessage } from 'https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging-sw.js';
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -16,20 +16,20 @@ const firebaseConfig = {
 };
 
 // Inicializar Firebase
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-// Inicializar Messaging
-const messaging = firebase.messaging();
+// Inicializar Messaging en el SW
+const messaging = getMessaging(app);
 
 // Escuchar mensajes en segundo plano
-messaging.setBackgroundMessageHandler(function(payload) {
+onBackgroundMessage(messaging, (payload) => {
   console.log('[firebase-messaging-sw.js] Mensaje en segundo plano recibido:', payload);
 
-  const notificationTitle = payload.notification.title;
+  const notificationTitle = payload.notification?.title || 'Nueva notificación';
   const notificationOptions = {
-    body: payload.notification.body,
-    icon: '../img/logo.jpg'
+    body: payload.notification?.body || '',
+    icon: '/img/logo.jpg'
   };
 
-  return self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
