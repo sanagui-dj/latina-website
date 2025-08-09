@@ -1,40 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedidos de Canciones (Prueba Aislada)</title>
-    <style>
-        /* Estilos básicos para que sea funcional */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; line-height: 1.6; background-color: #f0f2f5; color: #1c1e21; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        h1 { text-align: center; }
-        input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-        #results-container { min-height: 100px; border: 1px solid #eee; padding: 10px; }
-        .song-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #eee; }
-        .song-info { flex-grow: 1; }
-        .request-btn { padding: 8px 16px; border: none; background-color: #1877f2; color: white; border-radius: 6px; cursor: pointer; }
-        .request-btn:disabled { background-color: #90949c; }
-        #status-message { text-align: center; padding: 10px; margin-bottom: 15px; border-radius: 4px; display: none; }
-        .status-success { background-color: #d4edda; color: #155724; }
-        .status-error { background-color: #f8d7da; color: #721c24; }
-    </style>
+  <meta charset="UTF-8">
+  <title>Pedidos - Latina Live</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 1em;
+    }
+
+    h1 {
+      font-size: 1.5em;
+    }
+
+    iframe {
+      width: 100%;
+      height: 90vh;
+      border: none;
+      margin-top: 1em;
+    }
+
+    button {
+      margin-top: 1em;
+      padding: 0.5em 1em;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <a href="/">← Volver al inicio</a>
-        <h1>Sistema de Pedidos</h1>
-        
-        <input type="text" id="search-box" placeholder="Busca tu canción o artista favorito...">
-        
-        <div id="status-message"></div>
+  <h1>Pedidos</h1>
+  <button id="logoutBtn">Cerrar sesión</button>
 
-        <div id="results-container">
-            <p>Cargando lista de canciones...</p>
-        </div>
-    </div>
+  <div id="contenidoProtegido" style="display: none;">
+    <iframe
+      title="Canciones actualizadas - Latina Live"
+      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTQSVZ7RGXc6bDapDtd6mVK5ovicU5wUvTtbhjkbyUWJuXGJEY5C3pfQBsPk7Bn7xefdoAjqGt9Z67M/pubhtml?widget=true&amp;headers=false">
+    </iframe>
+  </div>
 
-    <!-- Cargamos un script dedicado SOLO para esta página -->
-    <script src="../scripts/pedidos-logic.js"></script>
+  <script type="module" src="../scripts/init.js"></script>
+  <script type="module">
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+
+    const auth = getAuth();
+    const contenido = document.getElementById("contenidoProtegido");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        contenido.style.display = "block";
+      } else {
+        window.location.href = "entrar.html";
+      }
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      signOut(auth).then(() => {
+        window.location.href = "entrar.html";
+      });
+    });
+  </script>
 </body>
 </html>
