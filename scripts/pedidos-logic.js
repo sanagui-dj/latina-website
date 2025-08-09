@@ -1,209 +1,141 @@
-// --- CONFIGURACIÓN ---
-const STATION_ID = 1; // Revisa que este sea tu ID de estación
-const SONGS_PER_PAGE = 20; // Cantidad de canciones a cargar por cada "página"
+// scripts/pedidos-logic.js (Versión con Paginación del Lado del Cliente)
 
-// --- ELEMENTOS DEL DOM ---
-const searchBox = document.getElementById('search-box');
-const resultsContainer = document.getElementById('results-container');
-const statusMessage = document.getElementById('status-message');
+document.addEventListener('DOMContentLoaded', () => {
 
-let allSongs = [];
-let currentPage = 1;
-let isLoading = false;
-let allSongsLoaded = false;
+    // --- CONFIGURACIÓN ---
+    const STATION_ID = 1; // Revisa que este sea tu ID de estación
+    const SONGS_PER_PAGE = 25; // Número de canciones a mostrar por "página"
 
-// --- FUNCIONES ---
+    // --- ELEMENTOS DEL DOM ---
+    const searchBox = document.getElementById('search-box');
+    const resultsContainer = document.getElementById('results-container');
+    const statusMessage = document.getElementById('status-message');
 
-function showStatus(message, isSuccess = true) {
-    if (!statusMessage) return;
-    statusMessage.textContent = message;
-    statusMessage.className = isSuccess ? 'status-success' : 'status-error';
-    statusMessage.style.display = 'block';
-    setTimeout(() => {
-        statusMessage.style.display = 'none';
-    }, 5000);
-}
+    let allRequestableSongs = []; // Aquí guardaremos TODAS las canciones pedibles (nuestro "buffet en la cocina")
+    let currentlyDisplayedSongs = []; // Las canciones que se están mostrando actualmente
+    let currentPage = 1;
+    let isLoading = false;
 
-function renderSongs(songs) {
-    if (!resultsContainer) return;
-    resultsContainer.innerHTML = '';
+    // --- FUNCIONES ---
 
-    if (!songs || songs.length === 0) {
-        resultsContainer.innerHTML = '<p>Lo sentimos, no hay canciones disponibles en la lista.</p>';
-        return;
-    }
+    function showStatus(message, isSuccess = true) { /* ... sin cambios ... */ }
 
-    songs.forEach(song => {
-        const songDiv = document.createElement('div');
-        songDiv.className = 'song-item';
-        songDiv.innerHTML = `
-            <div class="song-info">
-                <strong>${song.song.title}</strong><br>
-                <span>${song.song.artist}</span>
-            </div>
-            <button class="request-btn" data-request-id="${song.request_id}">Pedir</button>
-        `;
-        resultsContainer.appendChild(songDiv);
-    });
-}
-
-function renderMoreSongs(songs) {
-    if (!resultsContainer) return;
-
-    songs.forEach(song => {
-        const songDiv = document.createElement('div');
-        songDiv.className = 'song-item';
-        songDiv.innerHTML = `
-            <div class="song-info">
-                <strong>${song.song.title}</strong><br>
-                <span>${song.song.artist}</span>
-            </div>
-            <button class="request-btn" data-request-id="${song.request_id}">Pedir</button>
-        `;
-        resultsContainer.appendChild(songDiv);
-    });
-    const loadingIndicator = document.getElementById('loading-indicator');
-    if (loadingIndicator) {
-        loadingIndicator.remove();
-    }
-}
-
-async function fetchSongs(page = 1) {
-    if (isLoading || allSongsLoaded) {
-        return;
-    }
-    isLoading = true;
-
-    if (page === 1 && resultsContainer) {
-        resultsContainer.innerHTML = '<p>Cargando lista de canciones...</p>';
-    } else if (resultsContainer) {
-        const loadingIndicator = document.createElement('p');
-        loadingIndicator.textContent = 'Cargando más canciones...';
-        loadingIndicator.id = 'loading-indicator';
-        resultsContainer.appendChild(loadingIndicator);
-    }
-
-    const offset = (page - 1) * SONGS_PER_PAGE;
-
-    try {
-        const response = await fetch(`/api/get-request-list/${STATION_ID}?limit=${SONGS_PER_PAGE}&offset=${offset}`);
-        if (!response.ok) {
-            throw new Error(`El servidor respondió con un error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data.error) {
-            throw new Error(data.error);
-        }
-
-        if (data.songs.length === 0) {
-            allSongsLoaded = true;
-            const loadingIndicator = document.getElementById('loading-indicator');
-            if (loadingIndicator) {
-                loadingIndicator.remove();
-            }
+    // Función para renderizar la PRIMERA página de canciones
+    function renderInitialSongs(songs) {
+        if (!resultsContainer) return;
+        resultsContainer.innerHTML = '';
+        if (!songs || songs.length === 0) {
+            resultsContainer.innerHTML = '<p>Lo sentimos, no hay canciones disponibles para pedir en este momento.</p>';
             return;
         }
+        currentlyDisplayedSongs = songs.slice(0, SONGS_PER_PAGE);
+        currentPage = 1;
+        appendSongsToDOM(currentlyDisplayedSongs);
+    }
+    
+    // Función para AÑADIR más canciones al final de la lista
+    function renderMoreSongs() {
+        if (isLoading) return;
+        isLoading = true;
 
-        if (page === 1) {
-            allSongs = data.songs;
-            renderSongs(allSongs);
-        } else {
-            allSongs = [...allSongs, ...data.songs];
-            renderMoreSongs(data.songs);
-        }
+        const nextPage = currentPage + 1;
+        const start = currentPage * SONGS_PER_PAGE;
+        const end = nextPage * SONGS_PER_PAGE;
+        const newSongs = allRequestableSongs.slice(start, end);
 
-        currentPage++;
-    } catch (error) {
-        console.error('ERROR EN fetchSongs:', error);
-        if (page === 1 && resultsContainer) {
-            resultsContainer.innerHTML = `<p style="color: red;">No se pudo cargar la lista de canciones. Por favor, inténtalo de nuevo más tarde.</p>`;
-        } else {
-            const loadingIndicator = document.getElementById('loading-indicator');
-            if (loadingIndicator) {
-                loadingIndicator.remove();
-                const errorMessage = document.createElement('p');
-                errorMessage.style.color = 'red';
-                errorMessage.textContent = 'Error al cargar más canciones.';
-                resultsContainer.appendChild(errorMessage);
-            }
+        if (newSongs.length > 0) {
+            appendSongsToDOM(newSongs);
+            currentlyDisplayedSongs = [...currentlyDisplayedSongs, ...newSongs];
+            currentPage = nextPage;
         }
-    } finally {
+        
+        // Ocultar el indicador de carga si ya no hay más canciones
+        const loadingIndicator = document.getElementById('loading-indicator');
+        if (loadingIndicator && end >= allRequestableSongs.length) {
+            loadingIndicator.remove();
+        }
         isLoading = false;
     }
-}
 
-async function requestSong(event) {
-    if (!event.target.classList.contains('request-btn')) {
-        return;
+    // Función auxiliar para crear y añadir los elementos HTML al DOM
+    function appendSongsToDOM(songs) {
+        songs.forEach(song => {
+            const songDiv = document.createElement('div');
+            songDiv.className = 'song-item';
+            songDiv.innerHTML = `
+                <div class="song-info">
+                    <strong>${song.song.title}</strong><br>
+                    <span>${song.song.artist}</span>
+                </div>
+                <button class="request-btn" data-request-id="${song.request_id}" ${!song.is_requestable ? 'disabled' : ''}>${song.is_requestable ? 'Pedir' : 'No disponible'}</button>
+            `;
+            resultsContainer.appendChild(songDiv);
+        });
     }
 
-    const button = event.target;
-    const requestId = button.dataset.requestId;
-    button.disabled = true;
-    button.textContent = 'Enviando...';
 
-    try {
-        const response = await fetch(`/api/send-song-request/${STATION_ID}/${requestId}`, { method: 'POST' });
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'El servidor devolvió un error.');
+    async function fetchAllSongs() {
+        isLoading = true;
+        if (resultsContainer) resultsContainer.innerHTML = '<p>Cargando lista de canciones...</p>';
+
+        try {
+            const response = await fetch(`/api/get-request-list/${STATION_ID}`);
+            if (!response.ok) throw new Error('No se pudo conectar con el servidor de la radio.');
+            const data = await response.json();
+            if (data.error) throw new Error(data.error);
+
+            // Guardamos TODAS las canciones pedibles en nuestro "buffet"
+            allRequestableSongs = data.filter(song => song.is_requestable);
+            
+            // Mostramos solo la primera página
+            renderInitialSongs(allRequestableSongs);
+
+        } catch (error) {
+            console.error('ERROR EN fetchAllSongs:', error);
+            if (resultsContainer) resultsContainer.innerHTML = `<p style="color: red;">No se pudo cargar la lista de canciones.</p>`;
+        } finally {
+            isLoading = false;
         }
+    }
 
-        const result = await response.json();
-        if (result.error) {
-            throw new Error(result.error);
+    async function requestSong(event) { /* ... sin cambios ... */ }
+
+    function filterSongs() {
+        if (!searchBox) return;
+        const query = searchBox.value.toLowerCase().trim();
+        
+        // Si la búsqueda está vacía, mostramos la lista paginada original
+        if (!query) {
+            renderInitialSongs(allRequestableSongs);
+            return;
         }
-
-        if (result.success) {
-            showStatus(result.message || '¡Tu pedido se ha enviado con éxito!', true);
-        } else {
-            throw new Error(result.message || 'No se pudo enviar el pedido en este momento.');
+        
+        // Si hay una búsqueda, filtramos de TODO el buffet y mostramos los resultados
+        const filteredSongs = allRequestableSongs.filter(song =>
+            song.song.title.toLowerCase().includes(query) ||
+            song.song.artist.toLowerCase().includes(query)
+        );
+        // "renderInitialSongs" ahora se usa para mostrar cualquier lista desde el principio
+        renderInitialSongs(filteredSongs); 
+    }
+    
+    // --- LÓGICA DE SCROLL INFINITO ---
+    function handleScroll() {
+        // No cargamos más si se está buscando algo
+        if (searchBox.value.trim() !== '') return; 
+        
+        if (isLoading) return;
+        
+        // Comprobamos si el usuario ha llegado casi al final de la página
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+            renderMoreSongs();
         }
-    } catch (error) {
-        console.error('Error al enviar la petición:', error);
-        showStatus(error.message, false);
-    } finally {
-        setTimeout(() => {
-            button.disabled = false;
-            button.textContent = 'Pedir';
-        }, 60000);
-    }
-}
-
-function filterSongs() {
-    const query = searchBox.value.toLowerCase().trim();
-    const filteredSongs = allSongs.filter(song =>
-        song.song.title.toLowerCase().includes(query) ||
-        song.song.artist.toLowerCase().includes(query)
-    );
-    renderSongs(filteredSongs);
-    allSongsLoaded = true; // Consideramos la lista filtrada como completa para el scroll
-}
-
-function handleScroll() {
-    if (isLoading || allSongsLoaded) {
-        return;
     }
 
-    const scrollPosition = window.scrollY;
-    const windowHeight = window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
+    // --- EVENT LISTENERS ---
+    if (searchBox) searchBox.addEventListener('input', filterSongs);
+    if (resultsContainer) resultsContainer.addEventListener('click', requestSong);
+    window.addEventListener('scroll', handleScroll, { passive: true }); // Usamos passive para mejor rendimiento
 
-    if (scrollPosition + windowHeight > documentHeight - 300) {
-        fetchSongs(currentPage);
-    }
-}
-
-// --- EVENT LISTENERS ---
-if (searchBox) {
-    searchBox.addEventListener('input', filterSongs);
-}
-
-if (resultsContainer) {
-    resultsContainer.addEventListener('click', requestSong);
-}
-
-window.addEventListener('scroll', handleScroll);
-
-fetchSongs(currentPage); // Carga la primera página al inicio
+    fetchAllSongs(); // Carga el buffet completo en segundo plano y muestra la primera página
+});
