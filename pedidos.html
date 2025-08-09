@@ -1,70 +1,99 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Pedidos - Latina Live</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 0;
-      padding: 1em;
-    }
-
-    h1 {
-      font-size: 1.5em;
-    }
-
-    iframe {
-      width: 100%;
-      height: 90vh;
-      border: none;
-      margin-top: 1em;
-    }
-
-    button {
-      margin-top: 1em;
-      padding: 0.5em 1em;
-      font-size: 1em;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedidos de Canciones - Latina Live</title>
+    
+    <!-- Cargamos nuestra hoja de estilos principal para mantener la coherencia visual -->
+    <link rel="stylesheet" href="/css/custom.css">
+    
+    <!-- Estilos específicos y simplificados para esta página -->
+    <style>
+        .pedidos-container { 
+            max-width: 700px; 
+            margin: 40px auto; 
+            padding: 20px; 
+            border-radius: 8px; 
+        }
+        .pedidos-container h1 { 
+            text-align: center; 
+        }
+        #search-box { 
+            width: 100%; 
+            padding: 12px; 
+            margin-bottom: 20px; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
+            box-sizing: border-box; 
+            background-color: #fff; 
+            color: #333; 
+            font-size: 1rem;
+        }
+        .song-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 10px; 
+            border-bottom: 1px solid rgba(0,0,0,0.1); 
+        }
+        .song-item:last-child { 
+            border-bottom: none; 
+        }
+        .song-info { 
+            display: flex; 
+            flex-direction: column; 
+        }
+        .song-title { 
+            font-weight: bold; 
+        }
+        .song-artist { 
+            font-size: 0.9em; 
+        }
+        .request-btn:disabled { 
+            background-color: #5a5959; 
+            cursor: not-allowed; 
+        }
+        #status-message { 
+            text-align: center; 
+            padding: 10px; 
+            margin: 15px 0; 
+            border-radius: 4px; 
+            display: none; 
+        }
+        .status-success { 
+            background-color: #d4edda; 
+            color: #155724; 
+        }
+        .status-error { 
+            background-color: #f8d7da; 
+            color: #721c24; 
+        }
+    </style>
 </head>
 <body>
-  <h1>Pedidos</h1>
-  <button id="logoutBtn">Cerrar sesión</button>
+    <!-- Añadimos un enlace de navegación para volver al inicio, útil para el usuario -->
+    <nav style="text-align: center; margin-bottom: 20px;">
+        <a href="/">← Volver al Inicio</a>
+    </nav>
 
-  <div id="contenidoProtegido" style="display: none;">
-    <iframe
-      title="Canciones actualizadas - Latina Live"
-      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTQSVZ7RGXc6bDapDtd6mVK5ovicU5wUvTtbhjkbyUWJuXGJEY5C3pfQBsPk7Bn7xefdoAjqGt9Z67M/pubhtml?widget=true&amp;headers=false">
-    </iframe>
-  </div>
+    <main>
+        <section class="pedidos-container">
+            <h1>Pide tu Canción</h1>
+            <input type="text" id="search-box" placeholder="Busca por artista o título...">
+            
+            <div id="status-message"></div>
 
-  <script type="module" src="../scripts/init.js"></script>
-  <script type="module">
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+            <div id="results-container">
+                <p class="loading">Cargando canciones disponibles...</p>
+            </div>
+        </section>
+    </main>
 
-    const auth = getAuth();
-    const contenido = document.getElementById("contenidoProtegido");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        contenido.style.display = "block";
-      } else {
-        window.location.href = "entrar.html";
-      }
-    });
-
-    logoutBtn.addEventListener("click", () => {
-      signOut(auth).then(() => {
-        window.location.href = "../entrar/";
-      });
-    });
-  </script>
+    <!-- 
+      Cargamos el script que le da vida a la página. 
+      La ruta absoluta desde la raíz ('/') es la más robusta.
+    -->
+    <script src="../scripts/pedidos-logic.js"></script>
 </body>
 </html>
