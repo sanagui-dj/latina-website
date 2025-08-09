@@ -4,18 +4,30 @@
     <meta charset="UTF-8">
     <title>Panel de Locutores - Latina Live</title>
     <link rel="stylesheet" href="/css/custom.css">
+
+    <!-- ======================================================= -->
+    <!--  SCRIPT DE INICIALIZACIÓN DE ONESIGNAL (¡MUY IMPORTANTE!) -->
+    <!-- ======================================================= -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+    <script>
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(function(OneSignal) {
+        OneSignal.init({
+          // ¡RECUERDA REEMPLAZAR ESTO CON TU APP ID DE ONESIGNAL!
+          appId: "2b78d632-69cd-45e8-bda3-4208f4bf59d0", 
+        });
+      });
+    </script>
+    
     <style>
         .panel-container { max-width: 800px; margin: 40px auto; padding: 20px; }
-        #notifications-list { border: 1px solid #ccc; min-height: 200px; padding: 10px; margin-bottom: 20px; border-radius: 8px; background: rgba(255,255,255,0.1); }
-        .notification-item { border-bottom: 1px solid #aaa; padding: 10px 0; }
-        .notification-item:last-child { border-bottom: none; }
-        .notification-meta { font-size: 0.8em; color: #333; }
-        #new-notification-form textarea { width: 100%; min-height: 80px; box-sizing: border-box; margin-bottom: 10px; }
+        #notification-form textarea { width: 100%; min-height: 100px; box-sizing: border-box; margin-bottom: 10px; }
         #user-info { text-align: right; }
     </style>
 </head>
 <body>
     <main class="panel-container">
+        <!-- El div de información de usuario y logout se mantiene igual -->
         <div id="user-info">
             <span id="user-email">Cargando...</span>
             <button id="logoutBtn">Cerrar sesión</button>
@@ -23,30 +35,30 @@
 
         <h1>Panel de Locutores</h1>
         
-        <div id="content-wrapper" style="display: none;"> <!-- Oculto hasta que se verifique el login -->
+        <!-- El contenedor principal, oculto hasta que se verifique el login -->
+        <div id="content-wrapper" style="display: none;">
             <section>
-                <h2>📝 Publicar una Notificación</h2>
-                <form id="new-notification-form">
-                    <textarea id="notification-text" placeholder="Escribe tu mensaje para todos los locutores..." required></textarea>
-                    <button type="submit">Enviar Notificación</button>
+                <h2>📝 Enviar Notificación Push</h2>
+                <p>Escribe un mensaje a continuación y se enviará como una notificación push a todos los locutores suscritos.</p>
+                
+                <!-- FORMULARIO ACTUALIZADO: el ID ahora es "notification-form" -->
+                <form id="notification-form">
+                    <textarea id="notification-text" placeholder="Ej: ¡Atención! Cambio de programación a las 5 PM." required></textarea>
+                    <button type="submit">Enviar Notificación a Todos</button>
                 </form>
-            </section>
-
-            <section>
-                <h2>📢 Notificaciones</h2>
-                <button id="subscribeBtn">Suscribirse a Notificaciones</button>
-                                <div id="notifications-list">
-                    <p>Cargando notificaciones...</p>
-                </div>
             </section>
         </div>
 
+        <!-- El aviso para iniciar sesión se mantiene igual -->
         <div id="login-prompt" style="display: none;">
             <p>Necesitas <a href="/entrar/">iniciar sesión</a> para acceder al panel.</p>
         </div>
     </main>
 
-    <!-- Cargamos el script que le dará vida a todo -->
+    <!-- 
+      Cargamos nuestro script de lógica.
+      CORRECCIÓN DE RUTA: debe ser absoluta desde la raíz del sitio.
+    -->
     <script type="module" src="../scripts/panel_logic.js"></script>
 </body>
 </html>

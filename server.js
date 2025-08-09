@@ -1,45 +1,20 @@
-// server.js
+// server.js (Versión Limpia y Actualizada para OneSignal)
 
-// 1. Importar herramientas
+// 1. Importar herramientas (ya no necesitamos 'firebase-admin')
 const express = require('express');
 const path = require('path');
-const admin = require('firebase-admin'); // SDK de Admin de Firebase
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 2. Inicialización de Firebase Admin (sin cambios)
-try {
-  const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-  admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-  console.log('[LOG] Firebase Admin SDK inicializado.');
-} catch (error) {
-  console.error('[ERROR FATAL][Firebase Admin] No se pudo inicializar el SDK.');
-}
-
-// 3. Middlewares
+// 2. Middlewares (sin cambios)
 app.use(express.json()); // Para entender peticiones con cuerpo JSON
-
-// ==========================================================
-// ¡NUEVA RUTA DEDICADA PARA EL SERVICE WORKER!
-// Esta ruta intercepta la petición y sirve el archivo con las cabeceras correctas.
-// ==========================================================
-app.get('/firebase-messaging-sw.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript');
-  res.sendFile(path.join(__dirname, 'firebase-messaging-sw.js'));
-});
-
-
-// 4. Servir el resto de los archivos estáticos de la carpeta _site
-// IMPORTANTE: Esta línea va DESPUÉS de la ruta dedicada del Service Worker.
-app.use(express.static(path.join(__dirname, '_site')));
-
+app.use(express.static(path.join(__dirname, '_site'))); // Servir los archivos estáticos
 
 // ==========================================================
 // ENDPOINT DE API PARA SPOTIFY (SIN NINGÚN CAMBIO)
 // ==========================================================
 app.get('/api/spotify-releases', async (req, res) => {
   // ... tu código de Spotify, intacto ...
-  console.log('[LOG] Petición recibida en /api/spotify-releases');
   const clientId = process.env.SPOTIFY_CLIENT_ID;
   const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
   if (!clientId || !clientSecret) return res.status(500).json({ error: 'Configuración de Spotify incompleta.' });
@@ -57,7 +32,6 @@ app.get('/api/spotify-releases', async (req, res) => {
     res.status(500).json({ error: 'Fallo al obtener los lanzamientos de Spotify.' });
   }
 });
-
 
 // ==========================================================
 // ENDPOINTS DE API PARA PEDIDOS DE AZURACAST (SIN NINGÚN CAMBIO)
@@ -98,24 +72,47 @@ app.post('/api/send-song-request/:stationId/:requestId', async (req, res) => {
 
 
 // ==========================================================
-// ENDPOINT PARA ENVIAR NOTIFICACIONES PUSH (SIN NINGÚN CAMBIO)
+// ENDPOINT PARA ENVIAR NOTIFICACIONES PUSH (AHORA CON ONESIGNAL)
 // ==========================================================
 app.post('/api/send-notification', async (req, res) => {
-    // ... tu código de notificaciones, intacto ...
-    const { title, body } = req.body;
-    if (!title || !body) return res.status(400).json({ error: 'Título y cuerpo son obligatorios.' });
-    try {
-        const db = admin.firestore();
-        const subscriptionsSnapshot = await db.collection('subscriptions').get();
-        if (subscriptionsSnapshot.empty) return res.status(200).json({ success: true, message: 'No hay locutores suscritos.' });
-        const tokens = subscriptionsSnapshot.docs.map(doc => doc.id);
-        const message = { notification: { title, body }, tokens };
-        const response = await admin.messaging().sendMulticast(message);
-        res.status(200).json({ success: true, message: `Notificación enviada a ${response.successCount} dispositivo(s).` });
-    } catch (error) {
-        console.error('[ERROR FATAL][FCM]', error);
-        res.status(500).json({ error: 'Fallo al enviar la notificación push.' });
+  const { message } = req.body; // El frontend ahora nos envía 'message'
+  const { ONESIGNAL_APP_ID, ONESIGNAL_REST_API_KEY } = process.env;
+
+  if (!message) {
+    return res.status(400).json({ error: 'El mensaje no puede estar vacío.' });
+  }
+  if (!ONESIGNAL_APP_ID || !ONESIGNAL_REST_API_KEY) {
+    return res.status(500).json({ error: 'Configuración de OneSignal incompleta en el servidor.' });
+  }
+
+  try {
+    const response = await fetch('https://onesignal.com/api/v1/notifications', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json; charset=utf-8',
+        'Authorization': `Basic ${ONESIGNAL_REST_API_KEY}`
+      },
+      body: JSON.stringify({
+        app_id: ONESIGNAL_APP_ID,
+        included_segments: ["Subscribed Users"], // Enviar a todos los suscritos
+        headings: { "en": "Aviso de Latina Live" },
+        contents: { "en": message }
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+        // Si OneSignal devuelve un error, lo registramos y lo enviamos al cliente.
+        console.error('[ERROR][OneSignal]', data);
+        throw new Error(data.errors ? data.errors.join(', ') : 'Error desconocido de OneSignal');
     }
+    
+    res.status(200).json({ success: true, message: 'Notificación enviada a través de OneSignal.' });
+
+  } catch (error) {
+    console.error('[ERROR FATAL][OneSignal]', error);
+    res.status(500).json({ error: `Fallo al enviar la notificación: ${error.message}` });
+  }
 });
 
 
