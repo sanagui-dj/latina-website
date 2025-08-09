@@ -1,24 +1,51 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Panel de Notificaciones - Latina Live</title>
+    <meta charset="UTF-8">
+    <title>Panel de Locutores - Latina Live</title>
+    <link rel="stylesheet" href="/css/custom.css">
+    <style>
+        .panel-container { max-width: 800px; margin: 40px auto; padding: 20px; }
+        #notifications-list { border: 1px solid #ccc; min-height: 200px; padding: 10px; margin-bottom: 20px; border-radius: 8px; background: rgba(255,255,255,0.1); }
+        .notification-item { border-bottom: 1px solid #aaa; padding: 10px 0; }
+        .notification-item:last-child { border-bottom: none; }
+        .notification-meta { font-size: 0.8em; color: #333; }
+        #new-notification-form textarea { width: 100%; min-height: 80px; box-sizing: border-box; margin-bottom: 10px; }
+        #user-info { text-align: right; }
+    </style>
 </head>
 <body>
-  <h1>Enviar Notificación Push</h1>
+    <main class="panel-container">
+        <div id="user-info">
+            <span id="user-email">Cargando...</span>
+            <button id="logoutBtn">Cerrar sesión</button>
+        </div>
 
-  <form id="notif-form">
-    <label for="title">Título:</label><br>
-    <input type="text" id="title" name="title" required><br><br>
+        <h1>Panel de Locutores</h1>
+        
+        <div id="content-wrapper" style="display: none;"> <!-- Oculto hasta que se verifique el login -->
+            <section>
+                <h2>📝 Publicar una Notificación</h2>
+                <form id="new-notification-form">
+                    <textarea id="notification-text" placeholder="Escribe tu mensaje para todos los locutores..." required></textarea>
+                    <button type="submit">Enviar Notificación</button>
+                </form>
+            </section>
 
-    <label for="body">Mensaje:</label><br>
-    <textarea id="body" name="body" required></textarea><br><br>
+            <section>
+                <h2>📢 Tablón de Anuncios</h2>
+                <div id="notifications-list">
+                    <p>Cargando notificaciones...</p>
+                </div>
+            </section>
+        </div>
 
-    <button type="submit">Enviar</button>
-  </form>
+        <div id="login-prompt" style="display: none;">
+            <p>Necesitas <a href="/entrar/">iniciar sesión</a> para acceder al panel.</p>
+        </div>
+    </main>
 
-  <div id="status" aria-live="polite"></div>
-
-  <script src="admin.js"></script>
+    <!-- Cargamos el script que le dará vida a todo -->
+    <script type="module" src="../scripts/panel_logic.js"></script>
 </body>
 </html>
