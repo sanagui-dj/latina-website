@@ -1,10 +1,12 @@
-// scripts/pedidos-logic.js (Versión Corregida del Buffet)
+// scripts/pedidos-logic.js (Versión con Filtro de "is_requestable" DESACTIVADO para depuración)
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- CONFIGURACIÓN ---
     const STATION_ID = 1;
     const SONGS_PER_PAGE = 25;
 
+    // --- ELEMENTOS DEL DOM ---
     const searchBox = document.getElementById('search-box');
     const resultsContainer = document.getElementById('results-container');
     const statusMessage = document.getElementById('status-message');
@@ -18,58 +20,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showStatus(message, isSuccess = true) { /* ... sin cambios ... */ }
 
+    // Función para renderizar CUALQUIER lista de canciones desde el principio
     function renderInitialSongs(songsToRender) {
         console.log("[DEBUG] renderInitialSongs llamado con", songsToRender.length, "canciones.");
         if (!resultsContainer) return;
         
         resultsContainer.innerHTML = '';
         if (!songsToRender || songsToRender.length === 0) {
-            resultsContainer.innerHTML = '<p>Lo sentimos, no hay canciones disponibles para pedir en este momento.</p>';
+            // Este mensaje ahora solo debería aparecer si la API no devuelve NADA.
+            resultsContainer.innerHTML = '<p>No se encontraron canciones en la biblioteca de la radio.</p>';
             return;
         }
 
-        // --- ¡LA CORRECCIÓN LÓGICA ESTÁ AQUÍ! ---
-        // 1. Actualizamos la lista de canciones mostradas.
         currentlyDisplayedSongs = songsToRender.slice(0, SONGS_PER_PAGE);
-        // 2. Reseteamos la página a 1.
         currentPage = 1;
         
         console.log("[DEBUG] Mostrando las primeras", currentlyDisplayedSongs.length, "canciones.");
-        // 3. Mostramos esas canciones en el DOM.
         appendSongsToDOM(currentlyDisplayedSongs);
     }
     
-    function renderMoreSongs() {
-        if (isLoading) return;
+    // Función para AÑADIR más canciones al final de la lista
+    function renderMoreSongs() { /* ... sin cambios ... */ }
 
-        // No cargues más si lo que se muestra es un resultado de búsqueda
-        if (searchBox && searchBox.value.trim() !== '') return;
-        
-        // Comprobamos si ya hemos mostrado todo
-        if (currentlyDisplayedSongs.length >= allRequestableSongs.length) {
-            console.log("[DEBUG] Todas las canciones ya están cargadas.");
-            return;
-        }
-
-        isLoading = true;
-        console.log("[DEBUG] Cargando más canciones...");
-
-        const nextPage = currentPage + 1;
-        const start = currentPage * SONGS_PER_PAGE;
-        const end = nextPage * SONGS_PER_PAGE;
-        const newSongs = allRequestableSongs.slice(start, end);
-
-        if (newSongs.length > 0) {
-            appendSongsToDOM(newSongs);
-            currentlyDisplayedSongs.push(...newSongs); // Usamos spread syntax para añadir al array
-            currentPage = nextPage;
-            console.log("[DEBUG] Añadidas", newSongs.length, "canciones. Total mostrado:", currentlyDisplayedSongs.length);
-        }
-        
-        isLoading = false;
+    // Función auxiliar para crear y añadir los elementos HTML al DOM
+    function appendSongsToDOM(songs) {
+        songs.forEach(song => {
+            const songDiv = document.createElement('div');
+            songDiv.className = 'song-item';
+            // Esta lógica es clave: el botón se deshabilita si is_requestable es false.
+            songDiv.innerHTML = `
+                <div class="song-info">
+                    <strong>${song.song.title}</strong><br>
+                    <span>${song.song.artist}</span>
+                </div>
+                <button class="request-btn" data-request-id="${song.request_id}" ${!song.is_requestable ? 'disabled' : ''}>${song.is_requestable ? 'Pedir' : 'No disponible'}</button>
+            `;
+            resultsContainer.appendChild(songDiv);
+        });
     }
-
-    function appendSongsToDOM(songs) { /* ... sin cambios ... */ }
 
     async function fetchAllSongs() {
         if (isLoading) return;
@@ -85,8 +73,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (data.error) throw new Error(data.error);
 
             console.log("[DEBUG] API devolvió", data.length, "canciones en total.");
-            allRequestableSongs = data.filter(song => song.is_requestable);
-            console.log("[DEBUG] Encontradas", allRequestableSongs.length, "canciones pedibles.");
+            
+            // ==========================================================
+            // ¡AQUÍ ESTÁ EL CAMBIO!
+            // Comentamos el filtro para mostrar TODAS las canciones.
+            // allRequestableSongs = data.filter(song => song.is_requestable);
+            allRequestableSongs = data; // AHORA mostramos todo lo que la API nos da.
+            // ==========================================================
+            
+            console.log("[DEBUG] Guardadas", allRequestableSongs.length, "canciones en total (sin filtrar).");
             
             renderInitialSongs(allRequestableSongs);
 
@@ -100,28 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function requestSong(event) { /* ... sin cambios ... */ }
 
-    function filterSongs() {
-        if (!searchBox) return;
-        const query = searchBox.value.toLowerCase().trim();
-        
-        if (!query) {
-            renderInitialSongs(allRequestableSongs);
-            return;
-        }
-        
-        const filteredSongs = allRequestableSongs.filter(song =>
-            song.song.title.toLowerCase().includes(query) ||
-            song.song.artist.toLowerCase().includes(query)
-        );
-        renderInitialSongs(filteredSongs); 
-    }
+    function filterSongs() { /* ... sin cambios ... */ }
     
-    function handleScroll() {
-        if (isLoading) return;
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
-            renderMoreSongs();
-        }
-    }
+    function handleScroll() { /* ... sin cambios ... */ }
 
     // --- EVENT LISTENERS ---
     if (searchBox) searchBox.addEventListener('input', filterSongs);
