@@ -3,30 +3,29 @@
 // 1. Importar todo lo que necesitamos de Firebase y de nuestro init.js
 import { auth } from './init.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+// --- NUEVOS IMPORTS para Notificaciones Push ---
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-messaging.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-// 2. Inicializar Firestore
-const db = getFirestore();
-
-// 3. Referencias a los elementos del DOM
+// 2. Referencias a los elementos del DOM (algunas nuevas)
 const userEmailSpan = document.getElementById('user-email');
 const logoutBtn = document.getElementById('logoutBtn');
 const contentWrapper = document.getElementById('content-wrapper');
 const loginPrompt = document.getElementById('login-prompt');
 const notificationForm = document.getElementById('new-notification-form');
 const notificationText = document.getElementById('notification-text');
-const notificationsList = document.getElementById('notifications-list');
+const subscribeBtn = document.getElementById('subscribeBtn'); // <-- NUEVO: Botón para suscribirse
 
-// 4. El "Portero": onAuthStateChanged
+// 3. El "Portero": onAuthStateChanged (lógica principal de la página)
 onAuthStateChanged(auth, user => {
     if (user) {
         // --- Usuario AUTENTICADO ---
         contentWrapper.style.display = 'block';
         loginPrompt.style.display = 'none';
         userEmailSpan.textContent = `Conectado como: ${user.displayName || user.email}`;
-
-        // Escuchar por notificaciones en TIEMPO REAL
-        listenForNotifications();
+        
+        // Inicializamos el sistema de mensajería una vez que el usuario está logueado
+        initializeMessaging();
 
     } else {
         // --- Usuario NO AUTENTICADO ---
@@ -36,60 +35,97 @@ onAuthStateChanged(auth, user => {
     }
 });
 
-// 5. Función para escuchar y mostrar notificaciones
-function listenForNotifications() {
-    const notificationsRef = collection(db, 'notificaciones');
-    // Creamos una consulta para ordenar por fecha, la más nueva primero
-    const q = query(notificationsRef, orderBy('timestamp', 'desc'));
+// 4. Lógica para suscribirse a las notificaciones
+async function subscribeToNotifications() {
+  const messaging = getMessaging();
+  try {
+    // Pedimos permiso al usuario (el navegador mostrará una ventana emergente)
+    const permission = await Notification.requestPermission();
+    
+    if (permission === 'granted') {
+      console.log('Permiso de notificación concedido.');
+      
+      // Obtenemos el "token" (la dirección postal) de este navegador
+      const token = await getToken(messaging, {
+        // ¡IMPORTANTE! Pega aquí la clave pública que generaste en la consola de Firebase
+        vapidKey: 'BHN3F0qmnSdC8p3HNu3cRrh3KErpeiLNoN07frb8mJUbNpGW1sRPkD1UiA08vdMvNwkFilMeFD2VkFLShzK57zw'
+      });
 
-    // onSnapshot es la magia: se ejecuta cada vez que hay un cambio en la base de datos
-    onSnapshot(q, (snapshot) => {
-        notificationsList.innerHTML = ''; // Limpiamos la lista
-        if (snapshot.empty) {
-            notificationsList.innerHTML = '<p>No hay notificaciones.</p>';
-            return;
-        }
-
-        snapshot.forEach(doc => {
-            const notification = doc.data();
-            const date = notification.timestamp ? notification.timestamp.toDate().toLocaleString() : 'Enviando...';
-            
-            const item = document.createElement('div');
-            item.className = 'notification-item';
-            item.innerHTML = `
-                <p>${notification.text}</p>
-                <div class="notification-meta">
-                    <strong>Por:</strong> ${notification.author} | <strong>Fecha:</strong> ${date}
-                </div>
-            `;
-            notificationsList.appendChild(item);
+      if (token) {
+        console.log('Token de suscripción obtenido:', token);
+        // Guardamos este token en nuestra base de datos para poder enviarle mensajes
+        const db = getFirestore();
+        await setDoc(doc(db, "subscriptions", token), {
+          uid: auth.currentUser.uid,
+          timestamp: new Date()
         });
-    });
+        alert('¡Te has suscrito a las notificaciones con éxito!');
+        subscribeBtn.textContent = 'Suscrito ✅';
+        subscribeBtn.disabled = true;
+      } else {
+        console.warn('No se pudo obtener el token de suscripción.');
+        alert('No se pudo completar la suscripción. Asegúrate de no estar en modo incógnito y de que tu navegador es compatible.');
+      }
+    } else {
+      console.log('El usuario no concedió permiso para recibir notificaciones.');
+      alert('Has denegado el permiso para recibir notificaciones.');
+    }
+  } catch (error) {
+    console.error('Error durante el proceso de suscripción:', error);
+    alert('Ocurrió un error al intentar suscribirse.');
+  }
 }
 
-// 6. Función para ENVIAR una nueva notificación
+// 5. Lógica para ENVIAR una nueva notificación a todos
 notificationForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const text = notificationText.value.trim();
-    const user = auth.currentUser;
+    const body = notificationText.value.trim();
+    if (!body) return;
 
-    if (text && user) {
-        try {
-            // Añadimos un nuevo documento a la colección 'notificaciones'
-            await addDoc(collection(db, 'notificaciones'), {
-                text: text,
-                author: user.displayName || user.email,
-                timestamp: serverTimestamp() // Firebase pone la fecha y hora del servidor
-            });
-            notificationText.value = ''; // Limpiamos el campo
-        } catch (error) {
-            console.error("Error al enviar notificación: ", error);
-            alert("No se pudo enviar la notificación.");
-        }
+    const button = notificationForm.querySelector('button');
+    button.disabled = true;
+    button.textContent = 'Enviando...';
+
+    try {
+        // Llamamos a nuestra nueva API en el backend (server.js)
+        const response = await fetch('/api/send-notification', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: 'Aviso de Latina Live', body: body }) // Enviamos un título y el mensaje
+        });
+
+        if (!response.ok) throw new Error('El servidor devolvió un error.');
+
+        const result = await response.json();
+        if (result.error) throw new Error(result.error);
+        
+        notificationText.value = ''; // Limpiamos el campo
+        alert(result.message || 'Notificación enviada.');
+
+    } catch (error) {
+        console.error("Error al enviar notificación:", error);
+        alert(`No se pudo enviar la notificación: ${error.message}`);
+    } finally {
+        button.disabled = false;
+        button.textContent = 'Enviar Notificación';
     }
 });
 
-// 7. Lógica del botón de cerrar sesión
+// 6. Lógica para RECIBIR notificaciones MIENTRAS LA PÁGINA ESTÁ ABIERTA
+function initializeMessaging() {
+    const messaging = getMessaging();
+    // Este escuchador se activa si llega una notificación y el usuario tiene la pestaña abierta
+    onMessage(messaging, (payload) => {
+        console.log('Mensaje recibido en primer plano: ', payload);
+        // Mostramos una alerta simple, pero podría ser una notificación más elegante
+        alert(`Nuevo aviso:\n${payload.notification.title}\n${payload.notification.body}`);
+    });
+}
+
+// 7. Lógica del botón de cerrar sesión (sin cambios)
 logoutBtn.addEventListener('click', () => {
     signOut(auth);
 });
+
+// 8. Lógica del botón de suscribirse (sin cambios)
+subscribeBtn.addEventListener('click', subscribeToNotifications);
