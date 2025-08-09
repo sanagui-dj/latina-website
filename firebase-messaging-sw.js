@@ -1,6 +1,6 @@
 // firebase-messaging-sw.js
 
-// Importar scripts de Firebase (compat)
+// Importar scripts de Firebase (modo compat para SW)
 importScripts('https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/9.6.11/firebase-messaging-compat.js');
 
@@ -28,7 +28,7 @@ messaging.setBackgroundMessageHandler(function(payload) {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/img/logo.jpg'
+    icon: '../img/logo.jpg'
   };
 
   return self.registration.showNotification(notificationTitle, notificationOptions);
