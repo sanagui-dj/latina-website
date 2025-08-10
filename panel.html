@@ -6,15 +6,18 @@
     <link rel="stylesheet" href="/css/custom.css">
 
     <!-- ======================================================= -->
-    <!--  SCRIPT DE INICIALIZACIÓN DE ONESIGNAL (¡MUY IMPORTANTE!) -->
+    <!--  SCRIPT DE INICIALIZACIÓN DE ONESIGNAL (ACTUALIZADO)     -->
     <!-- ======================================================= -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(function(OneSignal) {
-        OneSignal.init({
-          // ¡RECUERDA REEMPLAZAR ESTO CON TU APP ID DE ONESIGNAL!
-          appId: "2b78d632-69cd-45e8-bda3-4208f4bf59d0", 
+      OneSignalDeferred.push(async function(OneSignal) {
+        await OneSignal.init({
+          appId: "2b78d632-69cd-45e8-bda3-4208f4bf59d0",
+          safari_web_id: "web.onesignal.auto.5ffbfb2e-5b9e-4e33-a6e5-d97b1e693743",
+          notifyButton: {
+            enable: true,
+          },
         });
       });
     </script>
@@ -27,7 +30,7 @@
 </head>
 <body>
     <main class="panel-container">
-        <!-- El div de información de usuario y logout se mantiene igual -->
+        <!-- Información de usuario y logout -->
         <div id="user-info">
             <span id="user-email">Cargando...</span>
             <button id="logoutBtn">Cerrar sesión</button>
@@ -35,13 +38,12 @@
 
         <h1>Panel de Locutores</h1>
         
-        <!-- El contenedor principal, oculto hasta que se verifique el login -->
+        <!-- Contenido principal -->
         <div id="content-wrapper" style="display: none;">
             <section>
                 <h2>Enviar Notificación Push</h2>
                 <p>Escribe un mensaje...</p>
                 
-                <!-- FORMULARIO ACTUALIZADO: el ID ahora es "notification-form" -->
                 <form id="notification-form">
                     <textarea id="notification-text" placeholder="Ej: únicamente mensajes importantes." required></textarea>
                     <button type="submit">Enviar Notificación a Todos</button>
@@ -49,16 +51,13 @@
             </section>
         </div>
 
-        <!-- El aviso para iniciar sesión se mantiene igual -->
+        <!-- Mensaje para iniciar sesión -->
         <div id="login-prompt" style="display: none;">
             <p>Necesitas <a href="/entrar/">iniciar sesión</a> para acceder al panel.</p>
         </div>
     </main>
 
-    <!-- 
-      Cargamos nuestro script de lógica.
-      CORRECCIÓN DE RUTA: debe ser absoluta desde la raíz del sitio.
-    -->
+    <!-- Script de lógica -->
     <script type="module" src="../scripts/panel_logic.js"></script>
 </body>
 </html>
