@@ -1,12 +1,12 @@
 // server.js (Versión Limpia y Actualizada para OneSignal)
 
-// 1. Importar herramientas (ya no necesitamos 'firebase-admin')
+// 1. Importar herramientas
 const express = require('express');
 const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 2. Middlewares (sin cambios)
+// 2. Middlewares
 app.use(express.json()); // Para entender peticiones con cuerpo JSON
 app.use(express.static(path.join(__dirname, '_site'))); // Servir los archivos estáticos
 
@@ -30,60 +30,6 @@ app.get('/api/spotify-releases', async (req, res) => {
     console.error('[ERROR FATAL][Spotify]', error.message);
     res.status(500).json({ error: 'Fallo al obtener los lanzamientos de Spotify.' });
   }
-});
-
-// ==========================================================
-// ENDPOINTS DE API PARA PEDIDOS DE AZURACAST (MODIFICADO SOLO ESTE)
-// ==========================================================
-app.get('/api/get-request-list/:stationId', async (req, res) => {
-    const { stationId } = req.params;
-    const { AZURACAST_URL, AZURACAST_API_KEY } = process.env;
-    const offset = parseInt(req.query.offset) || 0;
-    const limit = parseInt(req.query.limit) || 50; // Tamaño por página
-
-    if (!stationId || !AZURACAST_URL || !AZURACAST_API_KEY) {
-        return res.status(500).json({ error: 'Configuración de AzuraCast incompleta.' });
-    }
-
-    try {
-        const apiEndpoint = `${AZURACAST_URL}/api/station/${stationId}/requests`;
-        const response = await fetch(apiEndpoint, {
-            headers: { 'Authorization': `Bearer ${AZURACAST_API_KEY}` }
-        });
-        if (!response.ok) throw new Error(`Error de AzuraCast: ${response.status}`);
-        
-        const fullData = await response.json();
-
-        // Simulación de paginación si AzuraCast no la soporta nativamente
-        const total = fullData.length;
-        const slicedData = fullData.slice(offset, offset + limit);
-        const hasMore = offset + limit < total;
-
-        res.status(200).json({
-            total,
-            hasMore,
-            items: slicedData
-        });
-    } catch (error) {
-        console.error('[ERROR FATAL][AzuraCast]', error.message);
-        res.status(500).json({ error: error.message });
-    }
-});
-
-app.post('/api/send-song-request/:stationId/:requestId', async (req, res) => {
-    const { stationId, requestId } = req.params;
-    const { AZURACAST_URL, AZURACAST_API_KEY } = process.env;
-    if (!stationId || !requestId || !AZURACAST_URL || !AZURACAST_API_KEY) return res.status(500).json({ error: 'Faltan parámetros.' });
-    try {
-        const apiEndpoint = `${AZURACAST_URL}/api/station/${stationId}/request/${requestId}`;
-        const response = await fetch(apiEndpoint, { method: 'POST', headers: { 'Authorization': `Bearer ${AZURACAST_API_KEY}` } });
-        if (!response.ok) throw new Error(`Error al enviar el pedido: ${response.status}`);
-        const data = await response.json();
-        res.status(200).json(data);
-    } catch (error) {
-        console.error('[ERROR FATAL][AzuraCast Request]', error.message);
-        res.status(500).json({ error: error.message });
-    }
 });
 
 // ==========================================================
