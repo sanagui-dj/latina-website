@@ -55,9 +55,9 @@ app.post('/api/send-notification', async (req, res) => {
       },
       body: JSON.stringify({
         app_id: ONESIGNAL_APP_ID,
-        included_segments: ["Subscribed Users"],
-        headings: { "en": "Aviso de Latina Live" },
-        contents: { "en": message }
+        included_segments: [""],
+        headings: { "es": "Aviso de Latina Live" },
+        contents: { "es": message }
       })
     });
 
