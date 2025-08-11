@@ -1,63 +1,70 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>Panel de Locutores - Latina Live</title>
-    <link rel="stylesheet" href="/css/custom.css">
+    <link rel="stylesheet" href="/css/custom.css" />
 
-    <!-- ======================================================= -->
-    <!--  SCRIPT DE INICIALIZACIÓN DE ONESIGNAL (ACTUALIZADO)     -->
-    <!-- ======================================================= -->
+    <!-- Inicialización de OneSignal -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
           appId: "2b78d632-69cd-45e8-bda3-4208f4bf59d0",
-          safari_web_id: "web.onesignal.auto.5ffbfb2e-5b9e-4e33-a6e5-d97b1e693743",
-          notifyButton: {
-            enable: true,
-          },
+          safari_web_id: "web.onesignal.auto.5ffbfb2e-5ffbfb2e-5b9e-4e33-a6e5-d97b1e693743",
+          notifyButton: { enable: true }
         });
       });
     </script>
-    
+
     <style>
-        .panel-container { max-width: 800px; margin: 40px auto; padding: 20px; }
-        #notification-form textarea { width: 100%; min-height: 100px; box-sizing: border-box; margin-bottom: 10px; }
-        #user-info { text-align: right; }
+        .panel-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        #notification-form textarea {
+            width: 100%;
+            min-height: 100px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        #user-info {
+            text-align: right;
+        }
     </style>
 </head>
 <body>
-    <main class="panel-container">
-        <!-- Información de usuario y logout -->
+    <main class="panel-container" role="main" aria-label="Panel de locutores Latina Live">
+        <!-- Información de usuario y botón para cerrar sesión -->
         <div id="user-info">
-            <span id="user-email">Cargando...</span>
-            <button id="logoutBtn">Cerrar sesión</button>
+            <span id="user-email" aria-live="polite">Cargando...</span>
+            <button id="logoutBtn" type="button" aria-label="Cerrar sesión">Cerrar sesión</button>
         </div>
 
         <h1>Panel de Locutores</h1>
-        
-        <!-- Contenido principal -->
+
+        <!-- Contenido principal (se muestra solo si el usuario está autenticado) -->
         <div id="content-wrapper" style="display: none;">
-            <section>
+            <section aria-label="Enviar notificación push">
                 <h2>Enviar Notificación Push</h2>
                 <p>Escribe un mensaje...</p>
-                
+
                 <form id="notification-form">
-                    <textarea id="notification-text" placeholder="Ej: únicamente mensajes importantes." required></textarea>
+                    <textarea id="notification-text" placeholder="Ej: únicamente mensajes importantes." required aria-required="true"></textarea>
                     <button type="submit">Enviar Notificación a Todos</button>
                 </form>
             </section>
         </div>
 
-        <!-- Mensaje para iniciar sesión -->
-        <div id="login-prompt" style="display: none;">
+        <!-- Mensaje para iniciar sesión (se muestra si no hay usuario autenticado) -->
+        <div id="login-prompt" style="display: none;" role="alert">
             <p>Necesitas <a href="/entrar/">iniciar sesión</a> para acceder al panel.</p>
         </div>
     </main>
 
-    <!-- Script de lógica -->
+    <!-- Script con la lógica de autenticación, envío y cierre de sesión -->
     <script type="module" src="../scripts/panel_logic.js"></script>
 </body>
 </html>
