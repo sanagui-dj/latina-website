@@ -5,18 +5,8 @@
     <title>Panel de Locutores - Latina Live</title>
     <link rel="stylesheet" href="/css/custom.css" />
 
-    <!-- Inicialización de OneSignal -->
+    <!-- SDK de OneSignal (solo cargamos el script, inicialización se hace en panel_logic.js) -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-    <script>
-      window.OneSignalDeferred = window.OneSignalDeferred || [];
-      OneSignalDeferred.push(async function(OneSignal) {
-        await OneSignal.init({
-          appId: "2b78d632-69cd-45e8-bda3-4208f4bf59d0",
-          safari_web_id: "web.onesignal.auto.5ffbfb2e-5ffbfb2e-5b9e-4e33-a6e5-d97b1e693743",
-          notifyButton: { enable: true }
-        });
-      });
-    </script>
 
     <style>
         .panel-container {
@@ -64,7 +54,7 @@
         </div>
     </main>
 
-    <!-- Script con la lógica de autenticación, envío y cierre de sesión -->
+    <!-- Script con la lógica de autenticación, envío y cierre de sesión (inicializa OneSignal) -->
     <script type="module" src="../scripts/panel_logic.js"></script>
 </body>
 </html>
