@@ -50,6 +50,46 @@ title: Latina Live - tu alma, tu música
       <div id="new-releases-container">
         <p>Cargando novedades...</p>
       </div>
+
+      <script>
+        async function loadSpotifyReleases() {
+          const container = document.getElementById('new-releases-container');
+          container.innerHTML = '<p>Cargando novedades...</p>';
+          
+          try {
+            const res = await fetch('/api/spotify-releases');
+            if (!res.ok) throw new Error('Error al cargar lanzamientos');
+
+            const releases = await res.json();
+
+            if (releases.length === 0) {
+              container.innerHTML = '<p>No hay novedades disponibles.</p>';
+              return;
+            }
+
+            const list = document.createElement('ul');
+            releases.forEach(album => {
+              const item = document.createElement('li');
+              item.innerHTML = `
+                <strong>${album.title}</strong> por ${album.artist} 
+                (${album.release_date}, ${album.country})
+                - <a href="${album.url}" target="_blank">Escuchar</a>
+              `;
+              list.appendChild(item);
+            });
+
+            container.innerHTML = '';
+            container.appendChild(list);
+
+          } catch (err) {
+            container.innerHTML = `<p>Error al cargar lanzamientos: ${err.message}</p>`;
+            console.error(err);
+          }
+        }
+
+        // Cargar al iniciar
+        loadSpotifyReleases();
+      </script>
     </section>
 
     <section class="support-section">
