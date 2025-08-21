@@ -62,8 +62,9 @@ body: JSON.stringify({
     key: "locutor_uid",
     relation: "=",
     value: locutorId
-      }]
-    });
+    }]
+})
+});
 
     const data = await response.json();
     if (!response.ok) {
