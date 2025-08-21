@@ -33,6 +33,13 @@ const notificationText = document.getElementById('notification-text');
 // ==============================
 onAuthStateChanged(auth, user => {
     if (user) {
+        window.OneSignalDeferred.push(function (OneSignal) {
+            OneSignal.sendTags({
+                locutor_uid: user.uid
+            });
+            console.log("OneSignal: Se ha etiquetado al usuario con el UID:", user.uid);
+        });
+
         contentWrapper.style.display = 'block';
         loginPrompt.style.display = 'none';
         userEmailSpan.textContent = `Conectado como: ${user.displayName || user.email}`;
@@ -57,12 +64,24 @@ if (notificationForm) {
         button.textContent = 'Enviando...';
 
         try {
-            // Llamada a tu endpoint backend
-            const response = await fetch('/api/send-notification', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message })
-            });
+
+// Obtener el usuario actual para tomar su ID
+const user = auth.currentUser; 
+if (!user) {
+    alert("No hay usuario autenticado.");
+    return;
+}
+const locutorId = user.uid; // <-- Tomamos el UID de Firebase aquí
+
+// Llamada a tu endpoint backend, ahora enviando el ID del locutor
+const response = await fetch('/api/send-notification', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+        message: message,
+        locutorId: locutorId // <-- Enviamos el ID en el cuerpo de la solicitud
+    })
+});
 
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'Error en el servidor.');
