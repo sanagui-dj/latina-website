@@ -1,60 +1,74 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <title>Panel de Locutores - Latina Live</title>
-    <link rel="stylesheet" href="/css/custom.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel de Locutores - Latina Live</title>
 
-    <!-- SDK de OneSignal (solo cargamos el script, inicialización se hace en panel_logic.js) -->
-    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <link rel="stylesheet" href="/css/custom.css" />
+  <!-- Evitar 404 del favicon: si /favicon.ico existe, se usará; si no, tu server.js responde 204 -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
-    <style>
-        .panel-container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-        #notification-form textarea {
-            width: 100%;
-            min-height: 100px;
-            box-sizing: border-box;
-            margin-bottom: 10px;
-        }
-        #user-info {
-            text-align: right;
-        }
-    </style>
+  <!-- OneSignal v16: define la cola ANTES de cargar el SDK -->
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+  </script>
+  <!-- SDK de OneSignal (la inicialización real está en panel_logic.js) -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
+  <style>
+    .panel-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    #notification-form textarea {
+      width: 100%;
+      min-height: 100px;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    #user-info {
+      text-align: right;
+    }
+  </style>
 </head>
 <body>
-    <main class="panel-container" role="main" aria-label="Panel de locutores Latina Live">
-        <!-- Información de usuario y botón para cerrar sesión -->
-        <div id="user-info">
-            <span id="user-email" aria-live="polite">Cargando...</span>
-            <button id="logoutBtn" type="button" aria-label="Cerrar sesión">Cerrar sesión</button>
-        </div>
+  <noscript>
+    <div role="alert" style="padding: 1rem; background: #fff3cd; color: #333;">
+      Para usar el panel necesitas habilitar JavaScript.
+    </div>
+  </noscript>
 
-        <h1>Panel de Locutores</h1>
+  <main class="panel-container" role="main" aria-label="Panel de locutores Latina Live">
+    <!-- Información de usuario y botón para cerrar sesión -->
+    <div id="user-info">
+      <span id="user-email" aria-live="polite">Cargando...</span>
+      <button id="logoutBtn" type="button" aria-label="Cerrar sesión">Cerrar sesión</button>
+    </div>
 
-        <!-- Contenido principal (se muestra solo si el usuario está autenticado) -->
-        <div id="content-wrapper" style="display: none;">
-            <section aria-label="Enviar notificación push">
-                <h2>Enviar Notificación Push</h2>
-                <p>Escribe un mensaje...</p>
+    <h1>Panel de Locutores</h1>
 
-                <form id="notification-form">
-                    <textarea id="notification-text" placeholder="Ej: únicamente mensajes importantes." required aria-required="true"></textarea>
-                    <button type="submit">Enviar Notificación a Todos</button>
-                </form>
-            </section>
-        </div>
+    <!-- Contenido principal (se muestra solo si el usuario está autenticado) -->
+    <div id="content-wrapper" style="display: none;">
+      <section aria-label="Enviar notificación push">
+        <h2>Enviar Notificación Push</h2>
+        <p>Escribe un mensaje...</p>
 
-        <!-- Mensaje para iniciar sesión (se muestra si no hay usuario autenticado) -->
-        <div id="login-prompt" style="display: none;" role="alert">
-            <p>Necesitas <a href="/entrar/">iniciar sesión</a> para acceder al panel.</p>
-        </div>
-    </main>
+        <form id="notification-form">
+          <textarea id="notification-text" placeholder="Ej: únicamente mensajes importantes." required aria-required="true"></textarea>
+          <button type="submit">Enviar Notificación a Todos</button>
+        </form>
+      </section>
+    </div>
 
-    <!-- Script con la lógica de autenticación, envío y cierre de sesión (inicializa OneSignal) -->
-    <script type="module" src="../scripts/panel_logic.js"></script>
+    <!-- Mensaje para iniciar sesión (se muestra si no hay usuario autenticado) -->
+    <div id="login-prompt" style="display: none;" role="alert">
+      <p>Necesitas <a href="/entrar/">iniciar sesión</a> para acceder al panel.</p>
+    </div>
+  </main>
+
+  <!-- Script con la lógica de autenticación, etiquetado OneSignal v16 y envío -->
+  <script type="module" src="../scripts/panel_logic.js"></script>
 </body>
 </html>
