@@ -97,8 +97,8 @@ app.post('/api/send-notification', async (req, res) => {
     const bodyPayload = {
       app_id: ONESIGNAL_APP_ID,
       target_channel: 'push',
-      headings: { es: 'Aviso de Latina Live' },
-      contents: { es: message.trim() },
+headings: { en: 'Latina Live Notice', es: 'Aviso de Latina Live' },
+contents: { en: message.trim(), es: message.trim() },
       include_aliases: {
         external_id: [locutorId.trim()]
       }

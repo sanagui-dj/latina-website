@@ -7,6 +7,19 @@ import { auth } from './init.js';
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
 
 // ==============================
+// 0. Utilidades
+// ==============================
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+async function waitForSubscriptionId(OneSignal, attempts = 5, delayMs = 400) {
+  for (let i = 0; i < attempts; i++) {
+    const id = OneSignal?.User?.PushSubscription?.id || null;
+    if (id) return id;
+    await sleep(delayMs);
+  }
+  return OneSignal?.User?.PushSubscription?.id || null;
+}
+
+// ==============================
 // 2. Inicialización de OneSignal (SDK v16)
 // ==============================
 window.OneSignalDeferred = window.OneSignalDeferred || [];
@@ -23,7 +36,7 @@ OneSignalDeferred.push(async function (OneSignal) {
   console.log("OneSignal: isPushSupported =", isSupported);
   if (!isSupported) return;
 
-  // Listener de cambios en la suscripción (útil para ver cuándo aparece el ID)
+  // Listener de cambios en la suscripción (para depurar asignación de ID)
   OneSignal.User.PushSubscription.addEventListener("change", (ev) => {
     console.log("PushSubscription change:", { prev: ev.previous, curr: ev.current });
   });
@@ -41,14 +54,17 @@ OneSignalDeferred.push(async function (OneSignal) {
     }
   }
 
-  // Intenta optar (idempotente)
+  // Intentar asegurar suscripción (idempotente; chequeamos existencia)
   try {
-    await OneSignal.User.PushSubscription.optIn();
+    if (OneSignal?.User?.PushSubscription?.optIn) {
+      await OneSignal.User.PushSubscription.optIn();
+    }
   } catch (e) {
     console.error("PushSubscription.optIn:", e);
   }
 
-  const subId = OneSignal.User.PushSubscription.id; // puede ser null si aún no asigna
+  // Esperar a que haya ID de suscripción unos ciclos
+  const subId = await waitForSubscriptionId(OneSignal, 6, 350);
   console.log("OneSignal: subscriptionId =", subId);
 });
 
@@ -63,7 +79,7 @@ const notificationForm = document.getElementById('notification-form');
 const notificationText = document.getElementById('notification-text');
 
 // Ajusta si tu backend NO está en el mismo dominio:
-const API_BASE = ''; // p.ej. 'https://api.tu-dominio.com' si es otro host
+const API_BASE = ''; // p.ej. 'https://api.tu-dominio.com'
 
 // Helpers UI
 function showLoggedUI(emailOrName) {
@@ -78,31 +94,46 @@ function showLoggedOutUI() {
 }
 
 // ==============================
-// 4. Autenticación + OneSignal.login con token
+// 4. Autenticación + OneSignal.login con/sin token
 // ==============================
 onAuthStateChanged(auth, user => {
   if (user) {
     window.OneSignalDeferred.push(async function (OneSignal) {
       try {
-        // 1) Asegura que hay suscripción (por si aún no)
-        try { await OneSignal.User.PushSubscription.optIn(); } catch {}
+        // Asegurar suscripción por si acaso
+        try {
+          if (OneSignal?.User?.PushSubscription?.optIn) {
+            await OneSignal.User.PushSubscription.optIn();
+          }
+        } catch {}
 
-        // 2) Pide al servidor el token de identidad HMAC para este UID
-        const resp = await fetch(`${API_BASE}/api/onesignal/identity-token`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ externalId: user.uid })
-        });
-        const tok = await resp.json();
-        if (!resp.ok || !tok?.identityToken) {
-          throw new Error(tok?.error || 'No se pudo obtener identityToken del servidor');
+        // Pedir token al backend. Si no hay clave en el server, este endpoint
+        // debería devolver 200 con { identityToken: null } (como ya dejamos en server opcional).
+        let identityToken = null;
+        try {
+          const resp = await fetch(`${API_BASE}/api/onesignal/identity-token`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ externalId: user.uid })
+          });
+          const tok = await resp.json();
+          if (!resp.ok) throw new Error(tok?.error || 'No se pudo obtener identityToken del servidor');
+          identityToken = tok?.identityToken || null;
+        } catch (e) {
+          // Si falla este endpoint, no bloqueamos el login sin token
+          console.warn("identity-token endpoint warning:", e?.message || e);
         }
 
-        // 3) Login con external_id + identityToken (necesario si en OneSignal está activada Identity Verification)
-        await OneSignal.login(user.uid, tok.identityToken);
-        console.log("OneSignal: login OK con external_id =", user.uid);
+        // Login con o sin token (tolerante a la configuración del panel)
+        if (identityToken) {
+          await OneSignal.login(user.uid, identityToken);
+          console.log("OneSignal: login con token OK:", user.uid);
+        } else {
+          await OneSignal.login(user.uid);
+          console.log("OneSignal: login sin token OK:", user.uid);
+        }
 
-        // (Opcional) Añade tags si quieres segmentar también por tag
+        // (Opcional) Tags si también quieres segmentar por tag
         await OneSignal.User.addTags({ locutor_uid: user.uid });
       } catch (err) {
         console.error("OneSignal (login/addTags) error:", err);
@@ -140,12 +171,11 @@ if (notificationForm) {
         alert("No hay usuario autenticado.");
         return;
       }
-      const locutorId = user.uid;
 
       const response = await fetch(`${API_BASE}/api/send-notification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, locutorId })
+        body: JSON.stringify({ message, locutorId: user.uid })
       });
 
       const result = await response.json();
