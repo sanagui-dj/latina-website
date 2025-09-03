@@ -9,6 +9,7 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 // ==============================
 // 2. Inicialización de OneSignal (SDK v16)
 // ==============================
+// ¡OJO! No pisar la cola existente
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 OneSignalDeferred.push(async function (OneSignal) {
   await OneSignal.init({
@@ -18,20 +19,41 @@ OneSignalDeferred.push(async function (OneSignal) {
     allowLocalhostAsSecureOrigin: true
   });
 
+  // Soporte push
   const isSupported = await OneSignal.Notifications.isPushSupported();
   console.log("OneSignal: isPushSupported =", isSupported);
   if (!isSupported) return;
 
+  // Escucha cambios de suscripción para ver cuándo aparece el ID
+  OneSignal.User.PushSubscription.addEventListener("change", (ev) => {
+    console.log("PushSubscription change:", {
+      prev: ev.previous, curr: ev.current
+    });
+  });
+
+  // Permiso actual (booleano en v16)
   const permission = await OneSignal.Notifications.permission;
   console.log("OneSignal: permission =", permission);
 
-  if (permission !== "granted") {
-    try { await OneSignal.Slidedown.promptPush(); } catch (e) { console.warn("promptPush:", e); }
+  // Si no hay permiso, muestra prompt; para pruebas, puedes forzar
+  if (!permission) {
+    try {
+      await OneSignal.Slidedown.promptPush({ force: true });
+    } catch (e) {
+      console.warn("promptPush:", e);
+    }
   }
 
-  try { await OneSignal.User.Push.subscribe(); } catch (e) { console.error("Push.subscribe:", e); }
-  const subscriptionId = await OneSignal.User.Push.getSubscriptionId();
-  console.log("OneSignal: subscriptionId =", subscriptionId);
+  // Asegura estado "opted in" (esto intentará pedir permiso si falta)
+  try {
+    await OneSignal.User.PushSubscription.optIn();
+  } catch (e) {
+    console.error("PushSubscription.optIn:", e);
+  }
+
+  // Lee el ID de suscripción (puede ser null si aún no se asigna)
+  const subId = OneSignal.User.PushSubscription.id;
+  console.log("OneSignal: subscriptionId =", subId);
 });
 
 // ==============================
@@ -44,6 +66,7 @@ const loginPrompt = document.getElementById('login-prompt');
 const notificationForm = document.getElementById('notification-form');
 const notificationText = document.getElementById('notification-text');
 
+// Helpers UI
 function showLoggedUI(emailOrName) {
   if (contentWrapper) contentWrapper.style.display = 'block';
   if (loginPrompt) loginPrompt.style.display = 'none';
@@ -56,18 +79,19 @@ function showLoggedOutUI() {
 }
 
 // ==============================
-// 4. Lógica de autenticación + identidad OneSignal
+// 4. Autenticación + identidad OneSignal
 // ==============================
 onAuthStateChanged(auth, user => {
   if (user) {
     window.OneSignalDeferred.push(async function (OneSignal) {
       try {
-        await OneSignal.User.Push.subscribe();
-        await OneSignal.login(user.uid); // external_id = UID de Firebase
+        // Identidad por alias: external_id = UID de Firebase
+        await OneSignal.login(user.uid);
         console.log("OneSignal: external_id (login) =", user.uid);
 
-        // (Opcional) mantenemos tag si lo quieres
+        // (Opcional) tags adicionales
         await OneSignal.User.addTags({ locutor_uid: user.uid });
+        console.log("OneSignal: tag locutor_uid aplicado");
       } catch (err) {
         console.error("OneSignal (login/addTags) error:", err);
       }
@@ -82,6 +106,12 @@ onAuthStateChanged(auth, user => {
 // ==============================
 // 5. Envío de notificación
 // ==============================
+
+// Configura la URL base del backend:
+// - Si tu Node corre en el MISMO dominio que tu web, deja API_BASE = '' (rutas relativas).
+// - Si corre en OTRO dominio/puerto, pon aquí la URL ABSOLUTA y habilita CORS en server.js.
+const API_BASE = ''; // ej: 'https://tu-backend.com' si no es el mismo dominio
+
 if (notificationForm) {
   notificationForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -106,7 +136,7 @@ if (notificationForm) {
       }
       const locutorId = user.uid;
 
-      const response = await fetch('/api/send-notification', {
+      const response = await fetch(`${API_BASE}/api/send-notification`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, locutorId })
@@ -117,7 +147,6 @@ if (notificationForm) {
 
       console.log("OneSignal (server response):", result);
 
-      // Tomar recipients de la respuesta real:
       const recipients =
         (result?.oneSignalResponse && typeof result.oneSignalResponse.recipients === 'number')
           ? result.oneSignalResponse.recipients
