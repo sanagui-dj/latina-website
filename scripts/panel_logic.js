@@ -9,7 +9,6 @@ import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/
 // ==============================
 // 2. Inicialización de OneSignal (SDK v16)
 // ==============================
-// ¡OJO! No pisar la cola existente
 window.OneSignalDeferred = window.OneSignalDeferred || [];
 OneSignalDeferred.push(async function (OneSignal) {
   await OneSignal.init({
@@ -24,18 +23,16 @@ OneSignalDeferred.push(async function (OneSignal) {
   console.log("OneSignal: isPushSupported =", isSupported);
   if (!isSupported) return;
 
-  // Escucha cambios de suscripción para ver cuándo aparece el ID
+  // Listener de cambios en la suscripción (útil para ver cuándo aparece el ID)
   OneSignal.User.PushSubscription.addEventListener("change", (ev) => {
-    console.log("PushSubscription change:", {
-      prev: ev.previous, curr: ev.current
-    });
+    console.log("PushSubscription change:", { prev: ev.previous, curr: ev.current });
   });
 
   // Permiso actual (booleano en v16)
   const permission = await OneSignal.Notifications.permission;
   console.log("OneSignal: permission =", permission);
 
-  // Si no hay permiso, muestra prompt; para pruebas, puedes forzar
+  // Si no hay permiso, mostrar prompt (forzado para tests)
   if (!permission) {
     try {
       await OneSignal.Slidedown.promptPush({ force: true });
@@ -44,15 +41,14 @@ OneSignalDeferred.push(async function (OneSignal) {
     }
   }
 
-  // Asegura estado "opted in" (esto intentará pedir permiso si falta)
+  // Intenta optar (idempotente)
   try {
     await OneSignal.User.PushSubscription.optIn();
   } catch (e) {
     console.error("PushSubscription.optIn:", e);
   }
 
-  // Lee el ID de suscripción (puede ser null si aún no se asigna)
-  const subId = OneSignal.User.PushSubscription.id;
+  const subId = OneSignal.User.PushSubscription.id; // puede ser null si aún no asigna
   console.log("OneSignal: subscriptionId =", subId);
 });
 
@@ -65,6 +61,9 @@ const contentWrapper = document.getElementById('content-wrapper');
 const loginPrompt = document.getElementById('login-prompt');
 const notificationForm = document.getElementById('notification-form');
 const notificationText = document.getElementById('notification-text');
+
+// Ajusta si tu backend NO está en el mismo dominio:
+const API_BASE = ''; // p.ej. 'https://api.tu-dominio.com' si es otro host
 
 // Helpers UI
 function showLoggedUI(emailOrName) {
@@ -79,19 +78,32 @@ function showLoggedOutUI() {
 }
 
 // ==============================
-// 4. Autenticación + identidad OneSignal
+// 4. Autenticación + OneSignal.login con token
 // ==============================
 onAuthStateChanged(auth, user => {
   if (user) {
     window.OneSignalDeferred.push(async function (OneSignal) {
       try {
-        // Identidad por alias: external_id = UID de Firebase
-        await OneSignal.login(user.uid);
-        console.log("OneSignal: external_id (login) =", user.uid);
+        // 1) Asegura que hay suscripción (por si aún no)
+        try { await OneSignal.User.PushSubscription.optIn(); } catch {}
 
-        // (Opcional) tags adicionales
+        // 2) Pide al servidor el token de identidad HMAC para este UID
+        const resp = await fetch(`${API_BASE}/api/onesignal/identity-token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ externalId: user.uid })
+        });
+        const tok = await resp.json();
+        if (!resp.ok || !tok?.identityToken) {
+          throw new Error(tok?.error || 'No se pudo obtener identityToken del servidor');
+        }
+
+        // 3) Login con external_id + identityToken (necesario si en OneSignal está activada Identity Verification)
+        await OneSignal.login(user.uid, tok.identityToken);
+        console.log("OneSignal: login OK con external_id =", user.uid);
+
+        // (Opcional) Añade tags si quieres segmentar también por tag
         await OneSignal.User.addTags({ locutor_uid: user.uid });
-        console.log("OneSignal: tag locutor_uid aplicado");
       } catch (err) {
         console.error("OneSignal (login/addTags) error:", err);
       }
@@ -106,12 +118,6 @@ onAuthStateChanged(auth, user => {
 // ==============================
 // 5. Envío de notificación
 // ==============================
-
-// Configura la URL base del backend:
-// - Si tu Node corre en el MISMO dominio que tu web, deja API_BASE = '' (rutas relativas).
-// - Si corre en OTRO dominio/puerto, pon aquí la URL ABSOLUTA y habilita CORS en server.js.
-const API_BASE = ''; // ej: 'https://tu-backend.com' si no es el mismo dominio
-
 if (notificationForm) {
   notificationForm.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -146,7 +152,6 @@ if (notificationForm) {
       if (!response.ok) throw new Error(result?.error || 'Error en el servidor.');
 
       console.log("OneSignal (server response):", result);
-
       const recipients =
         (result?.oneSignalResponse && typeof result.oneSignalResponse.recipients === 'number')
           ? result.oneSignalResponse.recipients
