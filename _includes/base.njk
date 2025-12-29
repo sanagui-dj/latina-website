@@ -7,12 +7,10 @@
     
     <title>{{ title }}</title>
     
-    <!-- Hoja de estilos de Sakura (para el tema claro y oscuro) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura.css" type="text/css">
-    <link rel="stylesheet" href="/css/custom.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/latina/css/custom.css">
+    <link rel="icon" href="/latina/favicon.ico" type="image/x-icon">
 
-    <!-- Estilos para el botón de cambio de tema -->
     <style>
         #theme-toggle {
             position: fixed; top: 15px; right: 15px;
@@ -23,178 +21,120 @@
         body.dark #theme-toggle {
             background-color: #333; border-color: #555; color: #fff;
         }
+        #radio-alert {
+            display:none; background: #ffcc00; color: #000; padding: 15px; 
+            text-align: center; font-weight: bold; position: fixed; 
+            top: 0; left: 0; width: 100%; z-index: 9999;
+        }
     </style>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "RadioBroadcastService",
-  "name": "Latina Live",
-  "description": "Tu alma, tu música. La radio online con la mejor música latina y una comunidad vibrante.",
-  "url": "https://latina.ahmrs.net/",
-  "image": "https://latina.ahmrs.net/logo.jpg",
-  "broadcastFrequency": "online"
-}
-</script>
-<!-- Open Graph / Facebook -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://latina.ahmrs.net/">
-<meta property="og:title" content="Latina Live - tu alma, tu música">
-<meta property="og:description" content="Sintoniza en vivo la mejor música, pide tus canciones y conecta con nuestra comunidad.">
-<meta property="og:image" content="https://latina.ahmrs.net/logo.jpg">
 
-<!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:url" content="https://latina.ahmrs.net/">
-<meta property="twitter:title" content="Latina Live - tu alma, tu música">
-<meta property="twitter:description" content="Sintoniza en vivo la mejor música, pide tus canciones y conecta con nuestra comunidad.">
-<meta property="twitter:image" content="https://latina.ahmrs.net/logo.jpg">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "RadioBroadcastService",
+      "name": "Latina Live",
+      "description": "Tu alma, tu música. La radio online con la mejor música latina y una comunidad vibrante.",
+      "url": "https://ahmrs.net/latina/",
+      "image": "https://ahmrs.net/latina/img/logo.jpg",
+      "broadcastFrequency": "online"
+    }
+    </script>
 </head>
 
-<!-- Añadimos una clase 'light' por defecto al body para controlar el tema -->
 <body class="light">
+    <div id="radio-alert"></div>
 
-    <!-- BOTÓN PARA CAMBIAR EL TEMA -->
     <button id="theme-toggle" aria-label="Cambiar entre tema claro y oscuro">🌙</button>
 
-    <!-- La cabecera se mantiene igual en todas las páginas -->
     <header class="welcome-section">
         <h2>¡Latina Live!</h2>
-        <img src="/img/logo.jpg" alt="Un micrófono encantador con una sonrisa cálida...">
+        <img src="/latina/img/logo.jpg" alt="Logo Latina Live">
         <p>¡Bienvenido a tu apertura auditiva!</p>
-        <p>La música es tan antigua como el hombre y tan importante como el oxígeno. Desde que el mundo es mundo hemos usado la música con diferentes finalidades: el placer, la motivación, las batallas, los rituales. Hombre y arte se necesitan para existir, el primero para admirarla y la segunda para ser sublimada en sus usos. Los esclavos, en sus danzas han ocultado tácticas para huir de sus captores, en sus peinados mapas y en sus ropas armas. La música es un legado, es historia, es cultura. Por esto estamos nosotros aquí, dispuestos a abrirte los oídos, a hacerte consciente de que si se viaja en cada libro, se visita en cada canción un trozo distinto de nosotros. Latina Live ha llegado para mostrarte tu alma, tu música, para llevarte por los pasadizos más oscuros de las melodías hasta los claros más dulces y reverdecidos de la misma. La pregunta no es si quieres escucharnos, la pregunta es: ¿Quieres escucharte a ti?
-        </p>
+        <p>La música es un legado, es historia, es cultura. Latina Live ha llegado para mostrarte tu alma, tu música.</p>
     </header>
 
-    <!-- Aquí Eleventy inyectará el contenido de cada página -->
-    {{ content | safe }}
+    <main>
+        {{ content | safe }}
+    </main>
 
-    <!-- El pie de página se mantiene igual en todas las páginas -->
     <footer class="site-footer">
         <p>&copy; 2025 Latina Live</p>
     </footer>
-    
-    <!-- Placeholder para Font Awesome -->
-    <script src="https://kit.fontawesome.com/your_fontawesome_kit.js" crossorigin="anonymous"></script>
 
-<!-- ======================================================= -->
-<!--          INICIO DEL SCRIPT UNIFICADO                -->
-<!-- ======================================================= -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // --- LÓGICA DEL CAMBIADOR DE TEMA ---
-    const themeToggle = document.getElementById('theme-toggle');
-    const body = document.body;
-    if (themeToggle) {
-        const applyTheme = (theme) => {
-            if (theme === 'dark') {
-                body.classList.remove('light');
-                body.classList.add('dark');
-                themeToggle.textContent = '☀️';
-            } else {
-                body.classList.remove('dark');
-                body.classList.add('light');
-                themeToggle.textContent = '🌙';
-            }
-        };
-        const storedTheme = localStorage.getItem('theme') || 'light';
-        applyTheme(storedTheme);
-        themeToggle.addEventListener('click', () => {
-            const newTheme = body.classList.contains('light') ? 'dark' : 'light';
-            applyTheme(newTheme);
-            localStorage.setItem('theme', newTheme);
-        });
-    }
-
-    // --- LÓGICA DEL REPRODUCTOR DE AUDIO ---
-    const audio = document.getElementById('audio');
-    if (audio) {
-        const trackInfo = document.getElementById('track-info');
-        const volumeDisplay = document.getElementById('volume-display');
-        const lowerVolumeBtn = document.getElementById('lowerVolumeBtn');
-        const raiseVolumeBtn = document.getElementById('raiseVolumeBtn');
-        const streamUrl = "https://ahmrs.net/listen/latina/live";
-        audio.src = streamUrl;
-        audio.volume = 0.2;
-
-        function updateVolumeDisplay() {
-            if (volumeDisplay) volumeDisplay.textContent = `Volumen: ${Math.round(audio.volume * 100)}%`;
-        }
-
-        async function fetchMetadata() {
-            if (!trackInfo) return;
-            try {
-                const response = await fetch('https://ahmrs.net/api/nowplaying/1');
-                if (!response.ok) throw new Error(`Error de red: ${response.status}`);
-                const data = await response.json();
-                const songTitle = data.now_playing?.song?.title || "Sin información";
-                const songArtist = data.now_playing?.song?.artist || "Desconocido";
-                trackInfo.textContent = `Escuchando: ${songArtist} - ${songTitle}`;
-            } catch (error) {
-                trackInfo.textContent = "Información de la canción no disponible.";
-                console.error("Error al obtener los metadatos:", error);
-            }
-        }
-
-        if(lowerVolumeBtn) lowerVolumeBtn.addEventListener('click', () => {
-            audio.volume = Math.max(0, audio.volume - 0.1);
-            updateVolumeDisplay();
-        });
-        if(raiseVolumeBtn) raiseVolumeBtn.addEventListener('click', () => {
-            audio.volume = Math.min(1, audio.volume + 0.1);
-            updateVolumeDisplay();
-        });
-
-        updateVolumeDisplay();
-        fetchMetadata();
-        setInterval(fetchMetadata, 15000);
-        audio.play().catch(e => console.warn("La reproducción automática fue bloqueada por el navegador.", e));
-    }
-
-    // --- LÓGICA DEL WIDGET DE NOVEDADES DE SPOTIFY ---
-    const releasesContainer = document.getElementById('new-releases-container');
-    if (releasesContainer) {
-        async function loadNewReleases() {
-            try {
-                // Truco anti-caché para asegurar datos frescos
-                const cacheBuster = new Date().getTime();
-                const response = await fetch(`/api/spotify-releases?t=${cacheBuster}`);
-
-                if (!response.ok) throw new Error(`Error del servidor: ${response.status} ${response.statusText}`);
-                
-                const albums = await response.json();
-                if (albums.error) throw new Error(`Error en la API: ${albums.error}`);
-
-                releasesContainer.innerHTML = '';
-                
-                if (albums.length === 0) {
-                    releasesContainer.innerHTML = '<p>No hay novedades disponibles en este momento.</p>';
-                    return;
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // --- LÓGICA DEL CAMBIADOR DE TEMA ---
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        if (themeToggle) {
+            const applyTheme = (theme) => {
+                if (theme === 'dark') {
+                    body.classList.remove('light');
+                    body.classList.add('dark');
+                    themeToggle.textContent = '☀️';
+                } else {
+                    body.classList.remove('dark');
+                    body.classList.add('light');
+                    themeToggle.textContent = '🌙';
                 }
-                
-                albums.forEach(album => {
-                    const albumElement = document.createElement('div');
-                    albumElement.style.marginBottom = '15px';
-                    albumElement.innerHTML = `
-                        <a href="${album.external_urls.spotify}" target="_blank" style="display: flex; align-items: center; text-decoration: none; color: inherit;">
-                            <img src="${album.images[1]?.url || '/img/logo.jpg'}" alt="${album.name}" width="64" height="64" style="margin-right: 10px;">
-                            <div>
-                                <strong>${album.name}</strong><br>
-                                <span>${album.artists.map(artist => artist.name).join(', ')}</span>
-                            </div>
-                        </a>
-                    `;
-                    releasesContainer.appendChild(albumElement);
-                });
-            } catch (error) {
-                releasesContainer.innerHTML = '<p>No se pudieron cargar las novedades. Inténtalo más tarde.</p>';
-                console.error('Error al cargar el widget de Spotify:', error);
-            }
+            };
+            const storedTheme = localStorage.getItem('theme') || 'light';
+            applyTheme(storedTheme);
+            themeToggle.addEventListener('click', () => {
+                const newTheme = body.classList.contains('light') ? 'dark' : 'light';
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
         }
-        // Llamamos a la función para cargar el widget
-        loadNewReleases();
-    }
-});
-</script>
+
+        // --- LÓGICA DEL REPRODUCTOR DE AUDIO (Restaurada según tu original) ---
+        const audio = document.getElementById('audio');
+        if (audio) {
+            const trackInfo = document.getElementById('track-info');
+            const volumeDisplay = document.getElementById('volume-display');
+            const lowerVolumeBtn = document.getElementById('lowerVolumeBtn');
+            const raiseVolumeBtn = document.getElementById('raiseVolumeBtn');
+            const streamUrl = "https://ahmrs.net/listen/latina/live";
+            audio.src = streamUrl;
+            audio.volume = 0.2;
+
+            function updateVolumeDisplay() {
+                if (volumeDisplay) volumeDisplay.textContent = `Volumen: ${Math.round(audio.volume * 100)}%`;
+            }
+
+            async function fetchMetadata() {
+                if (!trackInfo) return;
+                try {
+                    const response = await fetch('https://ahmrs.net/api/nowplaying/1');
+                    if (!response.ok) throw new Error(`Error de red: ${response.status}`);
+                    const data = await response.json();
+                    const songTitle = data.now_playing?.song?.title || "Sin información";
+                    const songArtist = data.now_playing?.song?.artist || "Desconocido";
+                    trackInfo.textContent = `Escuchando: ${songArtist} - ${songTitle}`;
+                } catch (error) {
+                    trackInfo.textContent = "Información de la canción no disponible.";
+                    console.error("Error al obtener los metadatos:", error);
+                }
+            }
+
+            if(lowerVolumeBtn) lowerVolumeBtn.addEventListener('click', () => {
+                audio.volume = Math.max(0, audio.volume - 0.1);
+                updateVolumeDisplay();
+            });
+            if(raiseVolumeBtn) raiseVolumeBtn.addEventListener('click', () => {
+                audio.volume = Math.min(1, audio.volume + 0.1);
+                updateVolumeDisplay();
+            });
+
+            updateVolumeDisplay();
+            fetchMetadata();
+            setInterval(fetchMetadata, 15000);
+            audio.play().catch(e => console.warn("La reproducción automática fue bloqueada.", e));
+        }
+    });
+    </script>
+
+    <script type="module" src="/latina/scripts/notificaciones.js"></script>
 </body>
 </html>
