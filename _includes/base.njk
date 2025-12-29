@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sintoniza Latina Live, tu radio online con la mejor música. Escucha en vivo, pide tus canciones favoritas y conecta con tu alma a través de la música.">
+    <meta name="description" content="Sintoniza Latina Live, tu radio online con la mejor música.">
     
     <title>{{ title }}</title>
     
@@ -27,18 +27,6 @@
             top: 0; left: 0; width: 100%; z-index: 9999;
         }
     </style>
-
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "RadioBroadcastService",
-      "name": "Latina Live",
-      "description": "Tu alma, tu música. La radio online con la mejor música latina y una comunidad vibrante.",
-      "url": "https://ahmrs.net/latina/",
-      "image": "https://ahmrs.net/latina/img/logo.jpg",
-      "broadcastFrequency": "online"
-    }
-    </script>
 </head>
 
 <body class="light">
@@ -50,7 +38,6 @@
         <h2>¡Latina Live!</h2>
         <img src="/latina/img/logo.jpg" alt="Logo Latina Live">
         <p>¡Bienvenido a tu apertura auditiva!</p>
-        <p>La música es un legado, es historia, es cultura. Latina Live ha llegado para mostrarte tu alma, tu música.</p>
     </header>
 
     <main>
@@ -63,24 +50,20 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        
-        // --- LÓGICA DEL CAMBIADOR DE TEMA ---
+        // --- TEMA ---
         const themeToggle = document.getElementById('theme-toggle');
         const body = document.body;
         if (themeToggle) {
             const applyTheme = (theme) => {
                 if (theme === 'dark') {
-                    body.classList.remove('light');
-                    body.classList.add('dark');
+                    body.classList.remove('light'); body.classList.add('dark');
                     themeToggle.textContent = '☀️';
                 } else {
-                    body.classList.remove('dark');
-                    body.classList.add('light');
+                    body.classList.remove('dark'); body.classList.add('light');
                     themeToggle.textContent = '🌙';
                 }
             };
-            const storedTheme = localStorage.getItem('theme') || 'light';
-            applyTheme(storedTheme);
+            applyTheme(localStorage.getItem('theme') || 'light');
             themeToggle.addEventListener('click', () => {
                 const newTheme = body.classList.contains('light') ? 'dark' : 'light';
                 applyTheme(newTheme);
@@ -88,49 +71,24 @@
             });
         }
 
-        // --- LÓGICA DEL REPRODUCTOR DE AUDIO (Restaurada según tu original) ---
+        // --- AUDIO ---
         const audio = document.getElementById('audio');
         if (audio) {
             const trackInfo = document.getElementById('track-info');
-            const volumeDisplay = document.getElementById('volume-display');
-            const lowerVolumeBtn = document.getElementById('lowerVolumeBtn');
-            const raiseVolumeBtn = document.getElementById('raiseVolumeBtn');
             const streamUrl = "https://ahmrs.net/listen/latina/live";
             audio.src = streamUrl;
             audio.volume = 0.2;
 
-            function updateVolumeDisplay() {
-                if (volumeDisplay) volumeDisplay.textContent = `Volumen: ${Math.round(audio.volume * 100)}%`;
-            }
-
             async function fetchMetadata() {
-                if (!trackInfo) return;
                 try {
                     const response = await fetch('https://ahmrs.net/api/nowplaying/1');
-                    if (!response.ok) throw new Error(`Error de red: ${response.status}`);
                     const data = await response.json();
-                    const songTitle = data.now_playing?.song?.title || "Sin información";
-                    const songArtist = data.now_playing?.song?.artist || "Desconocido";
-                    trackInfo.textContent = `Escuchando: ${songArtist} - ${songTitle}`;
-                } catch (error) {
-                    trackInfo.textContent = "Información de la canción no disponible.";
-                    console.error("Error al obtener los metadatos:", error);
-                }
+                    trackInfo.textContent = `Escuchando: ${data.now_playing?.song?.artist} - ${data.now_playing?.song?.title}`;
+                } catch (e) { trackInfo.textContent = "Latina Live - Sintonizando..."; }
             }
-
-            if(lowerVolumeBtn) lowerVolumeBtn.addEventListener('click', () => {
-                audio.volume = Math.max(0, audio.volume - 0.1);
-                updateVolumeDisplay();
-            });
-            if(raiseVolumeBtn) raiseVolumeBtn.addEventListener('click', () => {
-                audio.volume = Math.min(1, audio.volume + 0.1);
-                updateVolumeDisplay();
-            });
-
-            updateVolumeDisplay();
             fetchMetadata();
             setInterval(fetchMetadata, 15000);
-            audio.play().catch(e => console.warn("La reproducción automática fue bloqueada.", e));
+            audio.play().catch(e => console.log("Bloqueo de audio inicial esperado."));
         }
     });
     </script>
