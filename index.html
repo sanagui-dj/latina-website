@@ -1,101 +1,64 @@
 ---
 layout: base.njk
-title: Latina Live - tu alma, tu música
+title: Latina Live - Tu alma, tu música
 ---
 
-<nav class="site-nav">
-    <ul>
-        <li><a href="/">Inicio</a></li>
-        <li><a href="/sociales/">Redes Sociales</a></li>
-        <li><a href="/contact/">Contacto</a></li>
-    </ul>
-</nav>
+<!-- Player Section -->
+<section class="player-container text-center" id="player">
+  <h1>¡Sintonízate con nosotros!</h1>
+  <p class="mb-4">Vibra en nuestra onda...</p>
 
-<aside class="player-container" id="player">
-    <h1>¡Sintonízate con nosotros!</h1>
-    <p>Vibra en nuestra onda...</p>
-    
-    <div class="audio-player">
-        <audio id="audio" controls autoplay>
-            Tu navegador no soporta el elemento de audio.
-        </audio>
-        <div class="track-info" id="track-info">Cargando información...</div>
-        <div class="controls">
-            <button id="lowerVolumeBtn" aria-label="Bajar volumen">Bajar Volumen</button>
-            <button id="raiseVolumeBtn" aria-label="Subir volumen">Subir Volumen</button>
-        </div>
-        <div class="volume-display" id="volume-display">Volumen: 20%</div>
-        <a href="/stream.m3u" class="external-player-link">Link para reproductores externos</a>
+  <div class="audio-player">
+    <audio id="audio" controls autoplay>
+      Tu navegador no soporta el elemento de audio.
+    </audio>
+    <div class="track-info" id="track-info" style="font-weight: 600; color: var(--brand-primary);">Cargando
+      información...</div>
+
+    <div class="controls" style="margin: 1rem 0;">
+      <button id="lowerVolumeBtn" aria-label="Bajar volumen" class="btn"
+        style="padding: 0.5rem 1rem; font-size: 0.9rem;">- Vol</button>
+      <button id="raiseVolumeBtn" aria-label="Subir volumen" class="btn"
+        style="padding: 0.5rem 1rem; font-size: 0.9rem;">+ Vol</button>
     </div>
-</aside>
+    <div class="volume-display" id="volume-display" style="font-size: 0.9rem; color: var(--text-muted);">Volumen: 20%
+    </div>
 
+    <div style="margin-top: 1rem;">
+      <a href="/stream.m3u" class="external-player-link"
+        style="font-size: 0.8rem; text-decoration: underline;">Reproductor Externo</a>
+    </div>
+  </div>
+</section>
 
-<main>
+<!-- Requests Section -->
+<section class="requests-section card text-center">
+  <h2>Pide tu Canción</h2>
+  <p>¡Queremos escucharte! Usa uno de los métodos a continuación para pedir tu tema favorito.</p>
+  <a href="/pedidos/" class="btn">Hacer un Pedido</a>
 
-    <section class="requests-section">
-        <h2>Pide tu Canción</h2>
-        <p>¡Queremos escucharte! Usa uno de los métodos a continuación para pedir tu tema favorito.</p>
-        <a href="/pedidos/">Pedidos</a>
-        <hr>
+  <hr style="border-color: #333; margin: 2rem 0;">
 
-        <div>
-            <h3>¿Hay un Locutor en Vivo?</h3>
-            <p>¡Pide tu canción favorita directamente al locutor que está al aire usando este formulario!</p>
-            <script type="text/javascript" src="https://form.jotform.com/jsform/252138587820058"></script>
-        </div>
-    </section>
+  <div>
+    <h3>¿Hay un Locutor en Vivo?</h3>
+    <p>¡Pide tu canción favorita directamente al locutor que está al aire usando este formulario!</p>
+    <!-- JotForm Embedding -->
+    <script type="text/javascript" src="https://form.jotform.com/jsform/252138587820058"></script>
+  </div>
+</section>
 
-    <section class="spotify-widget">
-      <h3>¡Últimos Lanzamientos en Spotify!</h3>
-      <div id="new-releases-container">
-        <p>Cargando novedades...</p>
-      </div>
+<!-- Spotify Widget Section -->
+<section class="spotify-widget card text-center">
+  <h3>¡Últimos Lanzamientos en Spotify!</h3>
+  <div style="margin-top: 1.5rem;">
+    <a href="/trends-suggestions.html" class="btn">Ver en Tendencias</a>
+  </div>
+</section>
 
-      <script>
-        async function loadSpotifyReleases() {
-          const container = document.getElementById('new-releases-container');
-          container.innerHTML = '<p>Cargando novedades...</p>';
-          
-          try {
-            const res = await fetch('/api/spotify-releases');
-            if (!res.ok) throw new Error('Error al cargar lanzamientos');
-
-            const releases = await res.json();
-
-            if (releases.length === 0) {
-              container.innerHTML = '<p>No hay novedades disponibles.</p>';
-              return;
-            }
-
-            const list = document.createElement('ul');
-            releases.forEach(album => {
-              const item = document.createElement('li');
-              item.innerHTML = `
-                <strong>${album.title}</strong> por ${album.artist} 
-                (${album.release_date}, ${album.country})
-                - <a href="${album.url}" target="_blank">Escuchar</a>
-              `;
-              list.appendChild(item);
-            });
-
-            container.innerHTML = '';
-            container.appendChild(list);
-
-          } catch (err) {
-            container.innerHTML = `<p>Error al cargar lanzamientos: ${err.message}</p>`;
-            console.error(err);
-          }
-        }
-
-        // Cargar al iniciar
-        loadSpotifyReleases();
-      </script>
-    </section>
-
-    <section class="support-section">
-        <h3>¡Sueña con nosotros! 📻</h3>
-        <p>¿Te gusta nuestra sintonía? Ven con nosotros, el cielo solo es una parada; los sueños no tienen precio.</p>
-        <a href="http://paypal.me/sanaguidj" class="donate-link">☁ ¡Pon tu peldaño nubal aquí! 🌠</a>
-    </section>
-
-</main>
+<!-- Donate/Support Section -->
+<section class="support-section card text-center" style="border-color: var(--brand-secondary);">
+  <h3>¡Sueña con nosotros! 📻</h3>
+  <p>¿Te gusta nuestra sintonía? Ven con nosotros, el cielo solo es una parada; los sueños no tienen precio.</p>
+  <a href="http://paypal.me/sanaguidj" class="btn" style="background: var(--brand-secondary);">☁ ¡Pon tu peldaño nubal
+    aquí! 🌠</a>
+</section>

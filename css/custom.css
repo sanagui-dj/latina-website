@@ -1,91 +1,236 @@
-/* --- css/custom.css --- */
-/* Hoja de Estilos Personalizada y Unificada para Latina Live */
+/* =========================================
+   Latina Live - Design System | Custom CSS
+   ========================================= */
 
-/* === CONFIGURACIÓN GLOBAL DE LA PÁGINA (body) === */
-/* Aquí combinamos los colores de fondo y el tamaño de fuente base. */
-body {
-  /* --- Color y Fondo --- */
-  background-color: #2b9ece; /* Fondo azul oscuro y vibrante */
-  color: #000000;             /* Texto principal en negro puro para máximo contraste */
+:root {
+  /* --- Color Palette --- */
+  --bg-primary: #121212;
+  --bg-secondary: #1E1E1E;
+  --bg-tertiary: #252525;
   
-  /* --- Tamaño de Fuente Base --- */
-  font-size: 1.15rem; /* ~18.4px, un tamaño cómodo para la lectura */
+  --brand-primary: #FF4B4B;    /* Latina Heat */
+  --brand-primary-hover: #FF9068;
+  --brand-secondary: #1DB954;  /* Spotify Green */
+  --brand-gradient: linear-gradient(135deg, #FF4B4B 0%, #FF9068 100%);
+
+  --text-main: #E0E0E0;
+  --text-muted: #A0A0A0;
+  --text-light: #FFFFFF;
+
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --glass-bg: rgba(30, 30, 30, 0.85);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+  --backdrop-blur: blur(12px);
+
+  /* --- Spacing & Radius --- */
+  --radius-lg: 16px;
+  --radius-pill: 50px;
+  --container-width: 1200px;
 }
 
-/* === TIPOGRAFÍA: TÍTULOS Y JERARQUÍA === */
-/* Mantenemos el amarillo brillante para los títulos, ya que se leen bien */
-h1, h2, h3, h4, h5, h6 {
-  color: #ffd500;
+/* --- Reset & Base --- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif; /* Requires Google Font import in HTML */
+  background-color: var(--bg-primary);
+  color: var(--text-main);
+  line-height: 1.6;
 }
 
-/* Ajustamos los tamaños de fuente para que sean proporcionales al nuevo texto base */
-h1, .h1 { font-size: 2.5rem; }
-h2, .h2 { font-size: 2rem; }
-h3, .h3 { font-size: 1.75rem; }
-h4, .h4 { font-size: 1.5rem; }
-
-
-/* === ESTILOS PARA ENLACES (Links) === */
-/* Abordamos la sugerencia de usar un color más legible que el amarillo brillante */
 a {
-  color: #f7a600; /* Amarillo anaranjado (#f7a600) para un contraste mucho mejor */
-  text-decoration: underline; /* Mantenemos el subrayado por accesibilidad */
+  color: var(--brand-primary);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+a:hover { color: var(--brand-primary-hover); }
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-light);
+  margin-top: 0;
+  font-weight: 700;
 }
 
-a:hover {
-  color: #df6c02; /* Naranja oscuro al pasar el cursor para un feedback claro */
+img { max-width: 100%; display: block; }
+
+/* --- Layout --- */
+main {
+  max-width: var(--container-width);
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
+/* --- Header / Hero --- */
+header.welcome-section {
+  text-align: center;
+  padding: 3rem 1rem;
+  background: radial-gradient(circle at center, #2a2a2a 0%, var(--bg-primary) 70%);
+}
 
-/* === ESTILOS PARA BOTONES === */
-/* Combinamos todas las reglas de los botones en un solo lugar */
-button, input[type="submit"] {
-  /* --- Apariencia --- */
-  background-color: #ffd500; /* Fondo amarillo brillante para que destaquen */
+header.welcome-section img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  border: 3px solid var(--brand-primary);
+  box-shadow: 0 0 20px rgba(255, 75, 75, 0.3);
+}
+
+header.welcome-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* --- Navigation --- */
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--glass-bg);
+  backdrop-filter: var(--backdrop-blur);
+  border-bottom: var(--glass-border);
+  padding: 1rem 0;
+}
+
+.site-nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.site-nav a {
+  color: var(--text-light);
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.5rem 1rem;
+  position: relative;
+}
+
+.site-nav a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  background: var(--brand-gradient);
+  transition: width 0.3s ease;
+}
+
+.site-nav a:hover::after { width: 100%; }
+
+/* --- Components: Buttons --- */
+button, .btn {
+  display: inline-block;
+  background: var(--brand-gradient);
+  color: white;
   border: none;
-  border-radius: 5px;
-  padding: 10px 15px;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: var(--radius-pill);
   cursor: pointer;
-
-  /* --- Texto del Botón --- */
-  color: #212121; /* Texto muy oscuro para máximo contraste sobre el amarillo */
-  font-weight: bold;
-  font-size: 1rem; /* Tamaño de fuente estándar y legible */
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 15px rgba(255, 75, 75, 0.3);
 }
 
-button:hover, input[type="submit"]:hover {
-  background-color: #fbba00; /* Un amarillo ligeramente más oscuro al pasar el ratón */
+button:hover, .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 75, 75, 0.5);
+  color: white; /* Ensure link color doesn't override */
 }
 
+/* --- Components: Cards --- */
+.card, section {
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-card);
+  border: 1px solid #333;
+  transition: transform 0.3s ease;
+}
 
-/* === ESTILOS PARA SECCIONES Y CONTENEDORES === */
-/* Aseguramos que las áreas principales tengan un fondo diferenciado y agradable */
-section, aside, main {
-  background-color: #5bc5f2; /* Azul más claro para las áreas de contenido */
-  padding: 20px;
+.card:hover {
+  transform: translateY(-5px);
+  border-color: var(--brand-primary);
+}
+
+/* --- Player --- */
+.player-container {
+  background: linear-gradient(145deg, #1e1e1e, #252525);
+  border-left: 5px solid var(--brand-primary);
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  margin: 2rem auto;
+  max-width: 800px;
+  box-shadow: var(--shadow-card);
+}
+
+.player-container h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+
+.audio-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+audio {
+  width: 100%;
+  filter: invert(0.9) hue-rotate(180deg); /* Quick hack to make default player dark-ish if not custom */
+}
+
+/* --- Spotify Grid --- */
+#dynamic-trends ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+  list-style: none;
+  padding: 0;
+}
+
+#dynamic-trends li {
+  background: var(--bg-tertiary);
+  padding: 1rem;
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+#dynamic-trends li:hover { background: #333; }
+
+#dynamic-trends img {
+  width: 100%;
   border-radius: 8px;
-  margin-bottom: 20px;
+  margin-bottom: 0.8rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
-
-/* === AJUSTES FINOS PARA COMPONENTES ESPECÍFICOS === */
-
-/* --- Reproductor de Audio --- */
-/* Texto "Escuchando: ..." */
-#track-info {
-  font-size: 1rem;
-  font-style: italic;
-  color: #000000; /* Aseguramos que sea negro y legible */
+/* --- Footer --- */
+.site-footer {
+  text-align: center;
+  padding: 2rem;
+  background: var(--bg-secondary);
+  margin-top: 4rem;
+  border-top: 1px solid #333;
+  color: var(--text-muted);
 }
 
-/* Texto "Volumen: ..." */
-#volume-display {
-  font-size: 0.9rem;
-  color: #403e3e; /* Usamos un gris oscuro, como se sugirió, para información secundaria */
-}
+/* --- Utilities --- */
+.hidden { display: none !important; }
+.text-center { text-align: center; }
 
-/* --- Pie de página --- */
-.site-footer p {
-  font-size: 1rem;
-  color: #000000;
+/* Responsive */
+@media (max-width: 768px) {
+  .site-nav ul { flex-direction: column; gap: 1rem; align-items: center; }
+  header.welcome-section h2 { font-size: 2rem; }
 }
