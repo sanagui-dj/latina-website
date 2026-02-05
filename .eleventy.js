@@ -1,5 +1,14 @@
+const sitemap = require("@quasibit/eleventy-plugin-sitemap");
+
 module.exports = function(eleventyConfig) {
   
+  // CONFIGURACIÓN DEL PLUGIN SITEMAP
+  eleventyConfig.addPlugin(sitemap, {
+    sitemap: {
+      hostname: "https://latinalive.net",
+    },
+  });
+
   // Copia de archivos estáticos
   eleventyConfig.addPassthroughCopy("scripts");
   eleventyConfig.addPassthroughCopy("css");
@@ -7,16 +16,19 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("stream.m3u");
   eleventyConfig.addPassthroughCopy("googlea95dadeac05ead3d.html");
   eleventyConfig.addPassthroughCopy("robots.txt");
-  eleventyConfig.addPassthroughCopy("sitemap.xml");
+  
+  // Eliminamos el passthrough de sitemap.xml para que el plugin pueda generarlo
+  // eleventyConfig.addPassthroughCopy("sitemap.xml"); 
 
-  // Si decides mantener OneSignal, deja estas dos líneas. Si no, bórralas:
+  // Si decides mantener OneSignal, deja estas dos líneas.
   // eleventyConfig.addPassthroughCopy("OneSignalSDKWorker.js");
   // eleventyConfig.addPassthroughCopy("OneSignalSDKWorkerUpdater.js");
 
   eleventyConfig.addWatchTarget("./_includes/");
   
   return {
-    // Esto asegura que el pathPrefix se aplique a los filtros de URL en el HTML
+    // Nota: El plugin usará el hostname de arriba, 
+    // pero respetará este pathPrefix si las URLs lo necesitan.
     pathPrefix: "/latina/", 
     dir: {
       input: ".",
