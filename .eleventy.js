@@ -9,8 +9,8 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("robots.txt");
   
   // ESTA LÍNEA ES CLAVE AHORA:
-  eleventyConfig.addPassthroughCopy("sitemap.xml"); 
-
+  eleventyConfig.addPassthroughCopy("sitemap.xml");
+eleventyConfig.addPassthroughCopy("src/img/site.webmanifest");
   eleventyConfig.addWatchTarget("./_includes/");
   
   return {
