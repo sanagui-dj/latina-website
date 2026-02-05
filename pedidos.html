@@ -80,7 +80,12 @@
     <main>
         <section class="pedidos-container">
             <h1>Pide tu Canción</h1>
-<iframe src="https://ahmrs.net/public/latina/embed-requests?theme=light" frameborder="0" allowtransparency="true" style="width: 100%; min-height: 850px; border: 0;"></iframe>
+<<form action="/api/pedido" method="POST">
+  <input type="text" name="nombre" placeholder="Tu nombre" required>
+  <input type="text" name="cancion" placeholder="¿Qué canción quieres?" required>
+  <textarea name="mensaje" placeholder="Tu saludo"></textarea>
+  <button type="submit">Enviar a cabina</button>
+</form>
         </section>
     </main>
 </body>
