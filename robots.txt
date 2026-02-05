@@ -1,1 +1,4 @@
-User-agent: * Allow: /  Sitemap: https://latina.ahmrs.net/sitemap.xml 
+User-agent: *
+Allow: /
+
+Sitemap: https://sanagui-dj.github.io/latina-website/sitemap.xml
