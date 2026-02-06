@@ -7,7 +7,23 @@ title: Latina live. ¡tu alma, tu música!
 <section class="player-container text-center" id="player">
   <h1>¡Sintonízate con nosotros!</h1>
   <p class="mb-4">Vibra en nuestra onda...</p>
+<p>Actualmente: <span id="nombre-locutor">Cargando...</span></p>
 
+<script>
+    async function actualizarLocutor() {
+        try {
+            const respuesta = await fetch('https://latinalive.net/api/estado');
+            const datos = await respuesta.json();
+            document.getElementById('nombre-locutor').innerText = datos.locutor;
+        } catch (error) {
+            console.error("Error al obtener el locutor", error);
+        }
+    }
+
+    // Revisar cada 10 segundos si cambió el locutor
+    actualizarLocutor();
+    setInterval(actualizarLocutor, 10000);
+</script>
   <div class="audio-player">
     <audio id="audio" controls autoplay src="https://radios.latinalive.net/listen/latina/live">
       Tu navegador no soporta el elemento de audio.
