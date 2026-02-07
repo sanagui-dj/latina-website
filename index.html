@@ -56,14 +56,41 @@ title: Latina live. ¡tu alma, tu música!
   <hr style="border-color: #333; margin: 2rem 0;">
 </section>
 
-<!-- Spotify Widget Section -->
-<section class="spotify-widget card text-center">
-  <h3>¡Últimos Lanzamientos en Spotify!</h3>
-  <div style="margin-top: 1.5rem;">
-    <a href="/trends-suggestions.html" class="btn">Ver en Tendencias</a>
-  </div>
-</section>
+<div id="chat-container" style="border:1px solid #ccc; height:300px; overflow-y:scroll; padding:10px; background:#f9f9f9;">
+    <div id="mensajes-box"></div>
+</div>
 
+<input type="text" id="chat-nombre" placeholder="Tu nombre">
+<input type="text" id="chat-msg" placeholder="Escribe un mensaje...">
+<button onclick="enviarMensaje()">Enviar</button>
+
+<script>
+    async function enviarMensaje() {
+        const usuario = document.getElementById('chat-nombre').value || "Invitado";
+        const mensaje = document.getElementById('chat-msg').value;
+        if(!mensaje) return;
+
+        await fetch('https://latinalive.net/api/enviar-web', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ usuario, mensaje })
+        });
+        document.getElementById('chat-msg').value = '';
+        cargarChat();
+    }
+
+    async function cargarChat() {
+        const res = await fetch('https://latinalive.net/api/leer-chat');
+        const mensajes = await res.res.json();
+        const box = document.getElementById('mensajes-box');
+        box.innerHTML = mensajes.map(m => `
+            <p><small>${m.fecha}</small> <strong>${m.usuario}:</strong> ${m.mensaje}</p>
+        `).join('');
+    }
+
+    setInterval(cargarChat, 4000); // Actualiza cada 4 segundos
+    cargarChat();
+</script>
 <!-- Donate/Support Section -->
 <section class="support-section card text-center" style="border-color: var(--brand-secondary);">
   <h3>¡Sueña con nosotros! 📻</h3>
