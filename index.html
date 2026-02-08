@@ -114,13 +114,23 @@ title: Latina live. ¡tu alma, tu música!
       lastMessageCount = mensajes.length;
 
       box.innerHTML = mensajes.map(m => {
-        // Format timestamp
-        const date = new Date(m.fecha || Date.now());
-        const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        // Format timestamp with validation
+        let timeStr = '';
+
+        if (m.fecha) {
+          const date = new Date(m.fecha);
+          // Check if date is valid
+          if (!isNaN(date.getTime())) {
+            timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+          }
+        }
+
+        // Only show timestamp if valid
+        const timestampHTML = timeStr ? `<small style="color: var(--brand-primary); margin-right: 0.5rem;">[${timeStr}]</small>` : '';
 
         return `
                 <p style="margin-bottom: 0.5rem; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                    <small style="color: var(--brand-primary); margin-right: 0.5rem;">[${timeStr}]</small> 
+                    ${timestampHTML} 
                     <strong>${m.usuario}:</strong> 
                     <span style="color: var(--text-main);">${m.mensaje}</span>
                 </p>
