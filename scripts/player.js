@@ -8,25 +8,60 @@ document.addEventListener('DOMContentLoaded', () => {
         if (audio && volumeDisplay) {
             const volPercent = Math.round(audio.volume * 100);
             volumeDisplay.textContent = `Volumen: ${volPercent}%`;
+
+            // Visual feedback animation
+            volumeDisplay.style.transform = 'scale(1.2)';
+            volumeDisplay.style.color = 'var(--brand-primary)';
+            setTimeout(() => {
+                volumeDisplay.style.transform = 'scale(1)';
+                volumeDisplay.style.color = 'var(--text-muted)';
+            }, 200);
         }
     };
 
-    document.getElementById('lowerVolumeBtn')?.addEventListener('click', () => {
-        if (audio) {
-            audio.volume = Math.max(0, audio.volume - 0.1);
-            updateVolumeDisplay();
+    const changeVolume = (amount) => {
+        if (!audio) return;
+        let newVol = Math.round((audio.volume + amount) * 10) / 10;
+        if (newVol > 1) newVol = 1;
+        if (newVol < 0) newVol = 0;
+        audio.volume = newVol;
+        updateVolumeDisplay();
+    };
+
+    document.getElementById('lowerVolumeBtn')?.addEventListener('click', () => changeVolume(-0.1));
+    document.getElementById('raiseVolumeBtn')?.addEventListener('click', () => changeVolume(0.1));
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', (e) => {
+        // Prevent default scrolling for Space/Arrows when focused on body (not inputs)
+        const isInput = ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
+        if (isInput) return;
+
+        switch (e.code) {
+            case 'Space':
+                e.preventDefault();
+                if (audio.paused) {
+                    audio.play();
+                } else {
+                    audio.pause();
+                }
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                changeVolume(0.1);
+                break;
+            case 'ArrowDown':
+                e.preventDefault();
+                changeVolume(-0.1);
+                break;
         }
     });
 
-    document.getElementById('raiseVolumeBtn')?.addEventListener('click', () => {
-        if (audio) {
-            audio.volume = Math.min(1, audio.volume + 0.1);
-            updateVolumeDisplay();
-        }
-    });
-
-    // Initialize volume display
-    updateVolumeDisplay();
+    // Initialize volume display without animation
+    if (audio && volumeDisplay) {
+        const volPercent = Math.round(audio.volume * 100);
+        volumeDisplay.textContent = `Volumen: ${volPercent}%`;
+    }
 
     // Track Info Update
     const updateTrackInfo = async () => {

@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
-    <meta name="description" content="Tu alma, tu música">
+    <meta name="description" content="{{ description | default('Tu alma, tu música - Latina Live Radio. Escucha lo mejor de la música latina en vivo.') }}">
     <meta name="author" content="Sanagui DJ">
     <meta name="robots" content="index, follow">
     
-    <meta property="og:title" content="Latina live">
-    <meta property="og:description" content="tu alma, tu música.">
+    <meta property="og:title" content="{{ title or 'Latina Live' }}">
+    <meta property="og:description" content="{{ description | default('Tu alma, tu música - Latina Live Radio') }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://latinalive.net/">
+    <meta property="og:image" content="/img/logo.jpg">
 
     <link rel="canonical" href="https://latinalive.net/">
 
@@ -27,11 +28,18 @@
     <link rel="stylesheet" href="/css/custom.css">
 
     <style>
-        #theme-toggle { display: none; }
+        /* Init theme early to prevent flash of wrong theme */
     </style>
+    <script>
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
 </head>
 
 <body>
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
     <nav class="site-nav">
         <ul>
             <li><a href="/">Inicio</a></li>
@@ -42,24 +50,74 @@
     </nav>
 
     <header class="welcome-section">
-        <img src="/img/logo.jpg" alt="Micrófono de dibujo animado con auriculares y cara sonriente, sentado en una silla de oficina, rodeado de notas musicales">
+        <img src="/img/logo.jpg" alt="Logotipo de Latina Live: Micrófono animado con auriculares">
         <h2>¡Latina Live!</h2>
         <p>¡Bienvenido a tu apertura auditiva!</p>
     </header>
 
-    <main>
+    <main id="main-content">
         {{ content | safe }}
     </main>
 
+    <button id="theme-toggle" class="theme-toggle-btn" aria-label="Cambiar modo claro/oscuro">
+        <span id="theme-icon">🌙</span>
+    </button>
+
     <footer class="site-footer">
         <p>&copy; 2026 Latina live. Todos los derechos reservados.</p>
-        <a href="/privacy/">Política de Privacidad</a>
-        <a href="/terminos/">Términos y condiciones</a>
+        <nav aria-label="Enlaces legales">
+            <a href="/privacy/">Política de Privacidad</a>
+            <a href="/terminos/">Términos y condiciones</a>
+        </nav>
     </footer>
 
-    <script type="module" src="/scripts/notificaciones.js"></script>
+    <!-- Schema Markup -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "RadioStation",
+      "name": "Latina Live",
+      "url": "https://latinalive.net",
+      "logo": "https://latinalive.net/img/logo.jpg",
+      "description": "Tu alma, tu música. Radio latina con la mejor música en vivo.",
+      "sameAs": [
+        "https://facebook.com/latinalive",
+        "https://instagram.com/latinalive"
+      ]
+    }
+    </script>
+
+    <script type="module" src="/scripts/notificaciones.js" defer></script>
     <script>
-        // Global Audio Player Persistence or other global scripts can go here
+        // Navbar Scrolled State
+        const nav = document.querySelector('.site-nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Theme Toggle
+        const toggleBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        
+        toggleBtn.addEventListener('click', () => {
+            let currentTheme = document.documentElement.getAttribute('data-theme');
+            let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateIcon(newTheme);
+        });
+
+        function updateIcon(theme) {
+            themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+        }
+        
+        // Init Icon
+        updateIcon(document.documentElement.getAttribute('data-theme'));
     </script>
 </body>
 </html>
