@@ -57,6 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Initialize volume
+    if (audio) {
+        audio.volume = 0.1; // Start at 10%
+    }
+
     // Initialize volume display without animation
     if (audio && volumeDisplay) {
         const volPercent = Math.round(audio.volume * 100);
