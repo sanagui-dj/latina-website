@@ -5,14 +5,15 @@ title: Tendencias y Sugerencias
 
 <section class="text-center">
     <h1>🎧 Tu dosis diaria de música</h1>
-    <p>Sumérgete en esta playlist que lo tiene todo: ritmo, emoción y pura energía. ¡Dale al play y deja que la música haga lo suyo!</p>
+    <p>Sumérgete en esta playlist que lo tiene todo: ritmo, emoción y pura energía. ¡Dale al play y deja que la música
+        haga lo suyo!</p>
 </section>
 
 <!-- Dynamic Content Section -->
 <section id="dynamic-trends-section" class="card">
     <h3>🔥 Últimos Lanzamientos</h3>
     <div id="loading-indicator">Cargando novedades de Spotify...</div>
-    
+
     <div id="dynamic-trends">
         <!-- JS will populate this -->
         <ul></ul>
@@ -24,7 +25,10 @@ title: Tendencias y Sugerencias
     <h3>📻 Nuestra Selección Especial</h3>
     <p>No pudimos conectar con las novedades en vivo, ¡pero disfruta de nuestra playlist oficial!</p>
     <div class="spotify-container">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/15WxVUkLN6LiTfni1qtogl?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <iframe style="border-radius:12px"
+            src="https://open.spotify.com/embed/playlist/15WxVUkLN6LiTfni1qtogl?utm_source=generator" width="100%"
+            height="352" frameBorder="0" allowfullscreen=""
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 </section>
 
@@ -33,49 +37,49 @@ title: Tendencias y Sugerencias
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', async () => {
-    const dynamicSection = document.getElementById('dynamic-trends-section');
-    const dynamicContainer = document.querySelector('#dynamic-trends ul');
-    const loadingIndicator = document.getElementById('loading-indicator');
-    const fallbackSection = document.getElementById('fallback-playlist');
+    document.addEventListener('DOMContentLoaded', async () => {
+        const dynamicSection = document.getElementById('dynamic-trends-section');
+        const dynamicContainer = document.querySelector('#dynamic-trends ul');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        const fallbackSection = document.getElementById('fallback-playlist');
 
-    try {
-        const response = await fetch('/api/spotify-releases');
-        if (!response.ok) throw new Error('API Error');
-        
-        const albums = await response.json();
-        
-        if (!Array.isArray(albums) || albums.length === 0) {
-            throw new Error('No Data');
-        }
+        try {
+            const response = await fetch('/api/spotify-releases');
+            if (!response.ok) throw new Error('API Error');
 
-        // Success - Render Albums
-        loadingIndicator.style.display = 'none';
-        
-        albums.forEach(album => {
-            // Check for images
-            const imgUrl = (album.images && album.images.length > 0) ? album.images[0].url : 'https://via.placeholder.com/300x300?text=No+Cover';
-            
-            const li = document.createElement('li');
-            li.innerHTML = `
+            const albums = await response.json();
+
+            if (!Array.isArray(albums) || albums.length === 0) {
+                throw new Error('No Data');
+            }
+
+            // Success - Render Albums
+            loadingIndicator.style.display = 'none';
+
+            albums.forEach(album => {
+                // Check for images
+                const imgUrl = (album.images && album.images.length > 0) ? album.images[0].url : 'https://via.placeholder.com/300x300?text=No+Cover';
+
+                const li = document.createElement('li');
+                li.innerHTML = `
                 <a href="${album.external_urls.spotify}" target="_blank" title="Escuchar en Spotify">
-                    <img src="${imgUrl}" alt="${album.name}">
+                    <img src="${imgUrl}" alt="${album.name}" loading="lazy">
                     <div class="album-info">
                         <strong>${album.name}</strong><br>
                         <small>${album.artists.map(a => a.name).join(', ')}</small>
                     </div>
                 </a>
             `;
-            dynamicContainer.appendChild(li);
-        });
+                dynamicContainer.appendChild(li);
+            });
 
-    } catch (error) {
-        console.warn('Fallo al cargar tendencias dinámicas, mostrando fallback:', error);
-        
-        // Hide dynamic section or show error message inside it? 
-        // Better to hide dynamic and show fallback as per plan.
-        dynamicSection.classList.add('hidden');
-        fallbackSection.classList.remove('hidden');
-    }
-});
+        } catch (error) {
+            console.warn('Fallo al cargar tendencias dinámicas, mostrando fallback:', error);
+
+            // Hide dynamic section or show error message inside it? 
+            // Better to hide dynamic and show fallback as per plan.
+            dynamicSection.classList.add('hidden');
+            fallbackSection.classList.remove('hidden');
+        }
+    });
 </script>
