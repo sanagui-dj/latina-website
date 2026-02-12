@@ -43,6 +43,8 @@
   --bg-primary: #F4F4F9;
   --bg-secondary: #FFFFFF;
   --bg-tertiary: #EAEAEA;
+  --brand-primary: #DE3131;
+  /* Darkened for accessibility contrast 4.5:1 */
   --text-main: #333333;
   --text-muted: #666666;
   --text-light: #121212;
@@ -463,13 +465,13 @@ audio {
   color: var(--text-main);
   border: 0.0625rem solid rgba(255, 255, 255, 0.2);
   width: 100%;
-  height: 22rem; 
+  height: 22rem;
   font-family: 'Montserrat', sans-serif;
   font-size: 1rem;
   line-height: 1.6;
   padding: 1rem;
   border-radius: 0.5rem;
-  resize: none; 
+  resize: none;
   margin-bottom: 1.5rem;
   scroll-behavior: smooth;
 }

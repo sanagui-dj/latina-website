@@ -42,10 +42,10 @@
 
     <nav class="site-nav" aria-label="Navegación principal">
         <ul>
-            <li><a href="/">Inicio</a></li>
-            <li><a href="/trends-suggestions/">Tendencias</a></li>
-            <li><a href="/sociales/">Redes Sociales</a></li>
-            <li><a href="/contact/">Contacto</a></li>
+            <li><a href="/" {% if page.url == "/" %}aria-current="page"{% endif %}>Inicio</a></li>
+            <li><a href="/trends-suggestions/" {% if page.url == "/trends-suggestions/" %}aria-current="page"{% endif %}>Tendencias</a></li>
+            <li><a href="/sociales/" {% if page.url == "/sociales/" %}aria-current="page"{% endif %}>Redes Sociales</a></li>
+            <li><a href="/contact/" {% if page.url == "/contact/" %}aria-current="page"{% endif %}>Contacto</a></li>
         </ul>
     </nav>
 
