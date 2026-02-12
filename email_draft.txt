@@ -1,0 +1,19 @@
+Asunto: IMPORTANTE: Registrar Sitemap de Latina Website en Google
+
+Hola Alex,
+
+Se han realizado actualizaciones importantes en el sitio web (https://sanagui-dj.github.io/latina-website/), incluyendo una nueva Política de Privacidad y mejoras de SEO.
+
+Para que Google indexe estos cambios rápidamente y el sitio aparezca correctamente en las búsquedas, es necesario realizar los siguientes pasos manuales (yo no puedo hacerlo por ti):
+
+1. Ve a **Google Search Console**: https://search.google.com/search-console
+2. Inicia sesión con tu cuenta de Google.
+3. Si no lo has hecho, añade tú propiedad (el sitio web): `https://sanagui-dj.github.io/latina-website/`
+4. En el menú de la izquierda, busca la sección **"Sitemaps"**.
+5. Donde dice "Añadir un sitemap nuevo", escribe: `sitemap.xml`
+6. Haz clic en **ENVIAR**.
+
+Esto asegurará que Google lea el archivo que acabamos de crear y actualice su información sobre el sitio.
+
+Saludos,
+Tu Asistente Técnico

@@ -59,9 +59,14 @@
 }
 
 html {
-  scroll-behavior: smooth;
   font-size: 100%;
   /* Base 16px */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
@@ -182,12 +187,14 @@ header.welcome-section img {
   /* 0 0 25px */
 }
 
-header.welcome-section h2 {
+header.welcome-section h2,
+header.welcome-section .h2-style {
   font-size: 3rem;
   margin-bottom: 0.5rem;
   color: var(--brand-primary);
   /* Solid color for accessibility */
   text-shadow: 0 0.125rem 0.5rem rgba(255, 75, 75, 0.3);
+  font-weight: 700;
 }
 
 /* --- Navigation --- */

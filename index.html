@@ -3,153 +3,147 @@ layout: base.njk
 title: Latina live. ¡tu alma, tu música!
 ---
 
-<a href="#main-content" class="skip-link">Saltar al contenido principal</a>
-
-<main id="main-content">
-  <section class="player-container text-center" id="player" aria-labelledby="player-title" role="region">
-    <h1 id="player-title">¡Sintonízate con nosotros!</h1>
-    <p class="mb-4">Vibra en nuestra onda...</p>
-    <p>Actualmente: <span id="nombre-locutor" style="font-weight:bold; color:var(--brand-primary);">Latina Live: Conectando...</span></p>
-
-    <script>
-      async function actualizarLocutor() {
-        try {
-          const respuesta = await fetch('https://latinalive.net/api/estado');
-          const datos = await respuesta.json();
-          document.getElementById('nombre-locutor').innerText = datos.locutor;
-        } catch (error) {
-          console.log("Locutor update failed", error);
-        }
-      }
-      setInterval(actualizarLocutor, 10000);
-      actualizarLocutor();
-    </script>
-
-    <div class="audio-player">
-      <audio id="audio" controls autoplay preload="none" src="https://radios.latinalive.net/listen/latina/live">
-        Tu navegador no soporta el elemento de audio.
-      </audio>
-      <div class="track-info" id="track-info" style="font-weight: 600; font-size: 1.2rem; color: var(--brand-primary);">
-        Cargando información...
-      </div>
-
-      <div class="controls" style="margin: 1rem 0; display: flex; gap: 1rem; justify-content: center;">
-        <button id="lowerVolumeBtn" aria-label="Bajar volumen" class="btn" style="padding: 0.8rem 1.5rem;">- Vol</button>
-        <button id="raiseVolumeBtn" aria-label="Subir volumen" class="btn" style="padding: 0.8rem 1.5rem;">+ Vol</button>
-      </div>
-      <div class="volume-display" id="volume-display"
-        style="font-size: 1rem; color: var(--text-muted); transition: transform 0.2s;">
-        Volumen: 100%
-      </div>
-
-      <div style="margin-top: 1.5rem;">
-        <a href="/stream.m3u" class="external-player-link"
-          style="font-size: 0.9rem; text-decoration: underline;">Reproductor Externo</a>
-      </div>
-    </div>
-  </section>
-
-  <script src="/scripts/player.js" defer></script>
-
-  <section class="requests-section card text-center" aria-labelledby="requests-title"
-    style="border: 2px solid var(--brand-primary);">
-    <h2 id="requests-title">Pide tu Canción</h2>
-    <p>¡Queremos escucharte! pedir tu canción favorita es fácil...</p>
-    <a href="/pedidos/" class="btn" style="margin-top: 1rem; font-size: 1.2rem;">Hacer un Pedido</a>
-  </section>
-
-  <section class="chat-section card" aria-labelledby="chat-title" role="region">
-    <h2 id="chat-title" class="text-center">Chat en Vivo</h2>
-    
-    <div id="chat-container">
-      <label for="flujo-chat" class="sr-only">Historial de mensajes del chat</label>
-      <textarea 
-        id="flujo-chat" 
-        readonly 
-        aria-live="polite" 
-        aria-atomic="false"
-        placeholder="Esperando mensajes de la cabina..."
-      ></textarea>
-    </div>
-
-    <div class="chat-controls chat-input-group">
-      <div style="margin-bottom: 1rem;">
-        <label for="chat-nombre">Tu nombre:</label>
-        <input type="text" id="chat-nombre" placeholder="Ej: Ale" aria-required="true">
-      </div>
-      
-      <div style="margin-bottom: 1rem;">
-        <label for="chat-msg">Mensaje:</label>
-        <input type="text" id="chat-msg" placeholder="Escribe a la cabina..." aria-required="true">
-      </div>
-      
-      <button onclick="enviarMensaje()" class="btn btn-chat-send">Enviar a Latina Live</button>
-    </div>
-  </section>
+<section class="player-container text-center" id="player" aria-labelledby="player-title" role="region">
+  <h1 id="player-title">¡Sintonízate con nosotros!</h1>
+  <p class="mb-4">Vibra en nuestra onda...</p>
+  <p>Actualmente: <span id="nombre-locutor" style="font-weight:bold; color:var(--brand-primary);">Latina Live:
+      Conectando...</span></p>
 
   <script>
-    let historialPrevio = "";
-
-    async function enviarMensaje() {
-      const usuarioInput = document.getElementById('chat-nombre');
-      const mensajeInput = document.getElementById('chat-msg');
-
-      const usuario = usuarioInput.value || "Invitado";
-      const mensaje = mensajeInput.value;
-
-      if (!mensaje) return;
-
+    async function actualizarLocutor() {
       try {
-        await fetch('https://latinalive.net/api/enviar-web', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ usuario, mensaje })
-        });
-        mensajeInput.value = '';
-        cargarChat();
-      } catch (e) {
-        console.error("Error sending message", e);
+        const respuesta = await fetch('https://latinalive.net/api/estado');
+        const datos = await respuesta.json();
+        document.getElementById('nombre-locutor').innerText = datos.locutor;
+      } catch (error) {
+        console.log("Locutor update failed", error);
       }
     }
-
-    async function cargarChat() {
-      try {
-        const res = await fetch('https://latinalive.net/api/leer-chat');
-        const mensajes = await res.json();
-        
-        if (!Array.isArray(mensajes)) return;
-
-        // Generamos el texto plano para el textarea (flujo accesible)
-        const nuevoTexto = mensajes.map(m => {
-          return `[${m.fecha || '--:--'}] ${m.usuario}: ${m.mensaje}`;
-        }).join('\n');
-
-        // Solo actualizamos si hay cambios para no interrumpir al lector de pantalla
-        if (nuevoTexto !== historialPrevio) {
-          const areaTexto = document.getElementById('flujo-chat');
-          areaTexto.value = nuevoTexto;
-          // Scroll automático al final
-          areaTexto.scrollTop = areaTexto.scrollHeight;
-          historialPrevio = nuevoTexto;
-        }
-      } catch (e) {
-        console.error("Error loading chat", e);
-      }
-    }
-
-    setInterval(cargarChat, 4000);
-    cargarChat();
-
-    document.getElementById('chat-msg').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') {
-        enviarMensaje();
-      }
-    });
+    setInterval(actualizarLocutor, 10000);
+    actualizarLocutor();
   </script>
 
-  <section class="support-section card text-center" style="border-color: var(--brand-secondary);" role="region" aria-labelledby="support-title">
-    <h3 id="support-title">¡Sueña con nosotros! 📻</h3>
-    <p>¿Te gusta nuestra sintonía? Ven con nosotros, el cielo solo es una parada; los sueños no tienen precio.</p>
-    <a href="http://paypal.me/sanaguidj" class="btn" style="background: var(--brand-secondary); margin-top: 1rem;">☁ ¡Pon tu peldaño nubal aquí! 🌠</a>
-  </section>
-</main>
+  <div class="audio-player">
+    <audio id="audio" controls autoplay preload="none" src="https://radios.latinalive.net/listen/latina/live">
+      Tu navegador no soporta el elemento de audio.
+    </audio>
+    <div class="track-info" id="track-info" style="font-weight: 600; font-size: 1.2rem; color: var(--brand-primary);">
+      Cargando información...
+    </div>
+
+    <div class="controls" style="margin: 1rem 0; display: flex; gap: 1rem; justify-content: center;">
+      <button id="lowerVolumeBtn" aria-label="Bajar volumen" class="btn" style="padding: 0.8rem 1.5rem;">- Vol</button>
+      <button id="raiseVolumeBtn" aria-label="Subir volumen" class="btn" style="padding: 0.8rem 1.5rem;">+ Vol</button>
+    </div>
+    <div class="volume-display" id="volume-display"
+      style="font-size: 1rem; color: var(--text-muted); transition: transform 0.2s;">
+      Volumen: 100%
+    </div>
+
+    <div style="margin-top: 1.5rem;">
+      <a href="/stream.m3u" class="external-player-link"
+        style="font-size: 0.9rem; text-decoration: underline;">Reproductor Externo</a>
+    </div>
+  </div>
+</section>
+
+<script src="/scripts/player.js" defer></script>
+
+<section class="requests-section card text-center" aria-labelledby="requests-title"
+  style="border: 2px solid var(--brand-primary);">
+  <h2 id="requests-title">Pide tu Canción</h2>
+  <p>¡Queremos escucharte! pedir tu canción favorita es fácil...</p>
+  <a href="/pedidos/" class="btn" style="margin-top: 1rem; font-size: 1.2rem;">Hacer un Pedido</a>
+</section>
+
+<section class="chat-section card" aria-labelledby="chat-title" role="region">
+  <h2 id="chat-title" class="text-center">Chat en Vivo</h2>
+
+  <div id="chat-container">
+    <label for="flujo-chat" class="sr-only">Historial de mensajes del chat</label>
+    <textarea id="flujo-chat" readonly aria-live="polite" aria-atomic="false"
+      placeholder="Esperando mensajes de la cabina..."></textarea>
+  </div>
+
+  <form class="chat-controls chat-input-group" onsubmit="event.preventDefault(); enviarMensaje();">
+    <div style="margin-bottom: 1rem;">
+      <label for="chat-nombre">Tu nombre:</label>
+      <input type="text" id="chat-nombre" placeholder="Ej: Ale" required aria-required="true">
+    </div>
+
+    <div style="margin-bottom: 1rem;">
+      <label for="chat-msg">Mensaje:</label>
+      <input type="text" id="chat-msg" placeholder="Escribe a la cabina..." required aria-required="true">
+    </div>
+
+    <button type="submit" class="btn btn-chat-send">Enviar a Latina Live</button>
+  </form>
+</section>
+
+<script>
+  let historialPrevio = "";
+
+  async function enviarMensaje() {
+    const usuarioInput = document.getElementById('chat-nombre');
+    const mensajeInput = document.getElementById('chat-msg');
+
+    const usuario = usuarioInput.value || "Invitado";
+    const mensaje = mensajeInput.value;
+
+    if (!mensaje) return;
+
+    try {
+      await fetch('https://latinalive.net/api/enviar-web', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, mensaje })
+      });
+      mensajeInput.value = '';
+      cargarChat();
+    } catch (e) {
+      console.error("Error sending message", e);
+    }
+  }
+
+  async function cargarChat() {
+    try {
+      const res = await fetch('https://latinalive.net/api/leer-chat');
+      const mensajes = await res.json();
+
+      if (!Array.isArray(mensajes)) return;
+
+      // Generamos el texto plano para el textarea (flujo accesible)
+      const nuevoTexto = mensajes.map(m => {
+        return `[${m.fecha || '--:--'}] ${m.usuario}: ${m.mensaje}`;
+      }).join('\n');
+
+      // Solo actualizamos si hay cambios para no interrumpir al lector de pantalla
+      if (nuevoTexto !== historialPrevio) {
+        const areaTexto = document.getElementById('flujo-chat');
+        areaTexto.value = nuevoTexto;
+        // Scroll automático al final
+        areaTexto.scrollTop = areaTexto.scrollHeight;
+        historialPrevio = nuevoTexto;
+      }
+    } catch (e) {
+      console.error("Error loading chat", e);
+    }
+  }
+
+  setInterval(cargarChat, 4000);
+  cargarChat();
+
+  document.getElementById('chat-msg').addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {
+      enviarMensaje();
+    }
+  });
+</script>
+
+<section class="support-section card text-center" style="border-color: var(--brand-secondary);" role="region"
+  aria-labelledby="support-title">
+  <h2 id="support-title">¡Sueña con nosotros! 📻</h2>
+  <p>¿Te gusta nuestra sintonía? Ven con nosotros, el cielo solo es una parada; los sueños no tienen precio.</p>
+  <a href="http://paypal.me/sanaguidj" class="btn" style="background: var(--brand-secondary); margin-top: 1rem;">☁ ¡Pon
+    tu peldaño nubal aquí! 🌠</a>
+</section>
