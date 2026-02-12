@@ -38,10 +38,10 @@ if (notificationForm) {
         fecha: serverTimestamp()
       });
       notificationText.value = '';
-      alert("¡Aviso publicado! Los oyentes lo verán ahora mismo.");
+      // Status message handled by form button for now, but adding console for debugging
+      console.log("Aviso publicado exitosamente");
     } catch (error) {
-      console.error(error);
-      alert("Error al publicar. Revisa los permisos.");
+      console.error("Error al publicar aviso:", error);
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = 'Publicar Aviso';

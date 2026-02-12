@@ -1,36 +1,35 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Panel Locutores - Latina Live</title>
-  <link rel="stylesheet" href="/latina/css/custom.css" />
-  <link rel="icon" href="/latina/favicon.ico" type="image/x-icon" />
-</head>
-<body>
-  <main class="panel-container">
-    <div id="user-info" style="text-align: right; padding: 10px;">
-      <span id="user-email">Cargando...</span>
-      <button id="logoutBtn" type="button">Cerrar sesión</button>
-    </div>
+---
+layout: base.njk
+title: Panel Locutores - Latina Live
+---
 
-    <h1>Panel de Locutores</h1>
+<div class="panel-container">
+  <div id="user-info" class="card"
+    style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem;">
+    <span id="user-email" style="font-weight: 600; color: var(--brand-primary);">Cargando locutor...</span>
+    <button id="logoutBtn" type="button" class="btn"
+      style="padding: 0.5rem 1.5rem; font-size: 0.9rem; background: var(--bg-tertiary); color: var(--text-main) !important; border: 1px solid var(--brand-primary);">Cerrar
+      sesión</button>
+  </div>
 
-    <div id="content-wrapper" style="display: none;">
-      <section>
-        <h2>Publicar Aviso en la Web</h2>
-        <form id="notification-form">
-          <textarea id="notification-text" placeholder="Escribe el mensaje para los oyentes..." required></textarea>
-          <button type="submit">Publicar Aviso</button>
-        </form>
-      </section>
-    </div>
+  <div id="content-wrapper" style="display: none;">
+    <section class="card">
+      <h2>Publicar Aviso en la Web</h2>
+      <p style="margin-bottom: 1.5rem; color: var(--text-muted);">El mensaje aparecerá instantáneamente para todos los
+        oyentes en el sitio.</p>
+      <form id="notification-form" class="chat-input-group">
+        <label for="notification-text" class="sr-only">Mensaje para los oyentes</label>
+        <textarea id="notification-text" placeholder="Escribe el mensaje para los oyentes..." required
+          style="min-height: 150px;"></textarea>
+        <button type="submit" class="btn btn-chat-send" style="width: 100%;">Publicar Aviso</button>
+      </form>
+    </section>
+  </div>
 
-    <div id="login-prompt" style="display: none;">
-      <p>Necesitas <a href="/latina/entrar/">iniciar sesión</a> para acceder.</p>
-    </div>
-  </main>
+  <div id="login-prompt" class="card text-center" style="display: none;">
+    <p>Necesitas <a href="/entrar/" style="text-decoration: underline; font-weight: 600;">iniciar sesión</a> para
+      acceder a las herramientas de locución.</p>
+  </div>
+</div>
 
-  <script type="module" src="/latina/scripts/panel_logic.js"></script>
-</body>
-</html>
+<script type="module" src="/scripts/panel_logic.js"></script>

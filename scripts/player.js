@@ -33,11 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Keyboard Shortcuts
     document.addEventListener('keydown', (e) => {
-        // Prevent default scrolling for Space/Arrows when focused on body (not inputs)
-        const isInput = ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName);
+        // Prevent default only if we are specifically handling the key
+        const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName);
         if (isInput) return;
 
         switch (e.code) {
+            case 'KeyK': // Common 'Play/Pause' shortcut in media apps
             case 'Space':
                 e.preventDefault();
                 if (audio.paused) {

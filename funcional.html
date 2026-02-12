@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sintoniza Latina Live, tu radio online con la mejor música. Escucha en vivo, pide tus canciones favoritas y conecta con tu alma a través de la música.">
-    
+    <meta name="description"
+        content="Sintoniza Latina Live, tu radio online con la mejor música. Escucha en vivo, pide tus canciones favoritas y conecta con tu alma a través de la música.">
+
     <title>Latina Live - tu alma, tu música</title>
-    
+
     <!-- NOTA: Se ha añadido Sakura.css para el estilo base. He eliminado 'styles.css' para evitar conflictos. Puedes volver a añadirlo si tienes estilos personalizados que quieras que se apliquen sobre Sakura. -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sakura.css/css/sakura.css" type="text/css">
-    
+
     <link rel="icon" href="favicon.ico" type="image/x-icon">
 
     <!-- Estilos adicionales para el botón del tema, para que no dependa de ninguna otra hoja de estilos. -->
@@ -27,6 +29,7 @@
             font-size: 20px;
             z-index: 1000;
         }
+
         body.dark #theme-toggle {
             background-color: #333;
             border-color: #555;
@@ -34,29 +37,30 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- BOTÓN PARA CAMBIAR EL TEMA: Añadido según tu solicitud. -->
     <button id="theme-toggle" aria-label="Cambiar entre tema claro y oscuro">🌙</button>
 
-    <aside class="player-container" id="player">
-        <h1>sintonízate con nosotros!</h1>
+    <aside class="player-container" id="player" role="region" aria-labelledby="player-title">
+        <h1 id="player-title">sintonízate con nosotros!</h1>
         <p>vibra en nuestra onda...</p>
-        
+
         <div class="audio-player">
             <audio id="audio" controls autoplay>
                 Tu navegador no soporta el elemento de audio.
             </audio>
-            
+
             <div class="track-info" id="track-info">Cargando información...</div>
-            
+
             <div class="controls">
                 <button id="lowerVolumeBtn" aria-label="Bajar volumen">Bajar Volumen</button>
                 <button id="raiseVolumeBtn" aria-label="Subir volumen">Subir Volumen</button>
             </div>
-            
+
             <div class="volume-display" id="volume-display">Volumen: 20%</div>
-            
+
             <a href="/stream.m3u" class="external-player-link">Link para reproductores externos</a>
         </div>
     </aside>
@@ -64,9 +68,19 @@
     <header class="welcome-section">
         <h2>¡Latina Live!</h2>
         <!-- CORRECCIÓN: Se ha restaurado la descripción completa de la imagen según tu solicitud. -->
-        <img src="/logo.jpg" alt="Un micrófono encantador con una sonrisa cálida se acomoda en una acogedora silla de oficina roja. Con grandes auriculares que parecen abrazarlo suavemente, se sumerge en un mundo de melodías. Las notas musicales flotan a su alrededor como mariposas, creando una atmósfera de serenidad y alegría. El fondo beige añade un toque de suavidad, haciendo que esta escena musical sea aún más entrañable y atractiva.">
-        
-        <p>¡Bienvenido a tu apertura auditiva! La música es tan antigua como el hombre y tan importante como el oxígeno. Desde que el mundo es mundo hemos usado la música con diferentes finalidades: el placer, la motivación, las batallas, los rituales. Hombre y arte se necesitan para existir, el primero para admirarla y la segunda para ser sublimada en sus usos. Los esclavos, en sus danzas han ocultado tácticas para huir de sus captores, en sus peinados mapas y en sus ropas armas. La música es un legado, es historia, es cultura. Por esto estamos nosotros aquí, dispuestos a abrirte los oídos, a hacerte consciente de que si se viaja en cada libro, se visita en cada canción un trozo distinto de nosotros. Latina Live ha llegado para mostrarte tu alma, tu música, para llevarte por los pasadizos más oscuros de las melodías hasta los claros más dulces y reverdecidos de la misma. La pregunta no es si quieres escucharnos, la pregunta es: ¿Quieres escucharte a ti?</p>
+        <img src="/logo.jpg"
+            alt="Un micrófono encantador con una sonrisa cálida se acomoda en una acogedora silla de oficina roja. Con grandes auriculares que parecen abrazarlo suavemente, se sumerge en un mundo de melodías. Las notas musicales flotan a su alrededor como mariposas, creando una atmósfera de serenidad y alegría. El fondo beige añade un toque de suavidad, haciendo que esta escena musical sea aún más entrañable y atractiva.">
+
+        <p>¡Bienvenido a tu apertura auditiva! La música es tan antigua como el hombre y tan importante como el oxígeno.
+            Desde que el mundo es mundo hemos usado la música con diferentes finalidades: el placer, la motivación, las
+            batallas, los rituales. Hombre y arte se necesitan para existir, el primero para admirarla y la segunda para
+            ser sublimada en sus usos. Los esclavos, en sus danzas han ocultado tácticas para huir de sus captores, en
+            sus peinados mapas y en sus ropas armas. La música es un legado, es historia, es cultura. Por esto estamos
+            nosotros aquí, dispuestos a abrirte los oídos, a hacerte consciente de que si se viaja en cada libro, se
+            visita en cada canción un trozo distinto de nosotros. Latina Live ha llegado para mostrarte tu alma, tu
+            música, para llevarte por los pasadizos más oscuros de las melodías hasta los claros más dulces y
+            reverdecidos de la misma. La pregunta no es si quieres escucharnos, la pregunta es: ¿Quieres escucharte a
+            ti?</p>
     </header>
 
     <nav class="site-nav">
@@ -87,18 +101,23 @@
         <section class="requests-section">
             <h3>Pide tu canción</h3>
             <p>Usa este formulario para enviarnos tus peticiones en cualquier momento.</p>
-            <iframe src="https://ahmrs.net/public/latina/embed-requests" frameborder="0" allowtransparency="true" style="width: 100%; min-height: 850px; border: 0;"></iframe>
-            
+            <iframe src="https://ahmrs.net/public/latina/embed-requests" frameborder="0" allowtransparency="true"
+                style="width: 100%; min-height: 850px; border: 0;"
+                title="Formulario de peticiones de canciones"></iframe>
+
             <hr>
 
             <h4>¿Hay un locutor en vivo?</h4>
             <p>¡Pide tu canción favorita directamente al locutor que está al aire!</p>
-            <script type="text/javascript" src="https://form.jotform.com/jsform/252138587820058"></script>
+            <div id="jotform-container" title="Formulario de contacto directo con el locutor">
+                <script type="text/javascript" src="https://form.jotform.com/jsform/252138587820058"></script>
+            </div>
         </section>
 
         <section class="support-section">
             <h3>¡Sueña con nosotros! 📻</h3>
-            <p>¿Te gusta nuestra sintonía? Ven con nosotros, el cielo solo es una parada; los sueños no tienen precio.</p>
+            <p>¿Te gusta nuestra sintonía? Ven con nosotros, el cielo solo es una parada; los sueños no tienen precio.
+            </p>
             <a href="http://paypal.me/sanaguidj" class="donate-link">☁ ¡Pon tu peldaño nubal aquí! 🌠</a>
         </section>
     </main>
@@ -106,13 +125,13 @@
     <footer class="site-footer">
         <p>&copy; 2025 Latina Live</p>
     </footer>
-    
+
     <!-- El script de Font Awesome se mantiene como placeholder. -->
     <script src="https://kit.fontawesome.com/your_fontawesome_kit.js" crossorigin="anonymous"></script>
-    
+
     <script>
         // SCRIPT DEL REPRODUCTOR DE AUDIO (sin cambios en su lógica)
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const audio = document.getElementById('audio');
             const trackInfo = document.getElementById('track-info');
             const volumeDisplay = document.getElementById('volume-display');
@@ -149,13 +168,13 @@
                 }
             }
 
-            if(lowerVolumeBtn) {
+            if (lowerVolumeBtn) {
                 lowerVolumeBtn.addEventListener('click', () => {
                     audio.volume = Math.max(0, audio.volume - 0.1);
                     updateVolumeDisplay();
                 });
             }
-            if(raiseVolumeBtn) {
+            if (raiseVolumeBtn) {
                 raiseVolumeBtn.addEventListener('click', () => {
                     audio.volume = Math.min(1, audio.volume + 0.1);
                     updateVolumeDisplay();
@@ -169,10 +188,10 @@
         });
 
         // NUEVO SCRIPT PARA EL BOTÓN DE CAMBIO DE TEMA
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const themeToggle = document.getElementById('theme-toggle');
             const body = document.body;
-            
+
             // Función para aplicar el tema guardado al cargar la página
             const applyStoredTheme = () => {
                 const storedTheme = localStorage.getItem('theme');
@@ -184,7 +203,7 @@
                     themeToggle.textContent = '🌙'; // Cambia el ícono a luna
                 }
             };
-            
+
             // Evento para el botón
             themeToggle.addEventListener('click', () => {
                 body.classList.toggle('dark');
@@ -203,4 +222,5 @@
         });
     </script>
 </body>
+
 </html>

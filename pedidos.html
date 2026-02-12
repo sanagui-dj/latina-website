@@ -1,121 +1,31 @@
-<!DOCTYPE html>
-<html lang="es">
+---
+layout: base.njk
+title: Pedidos de Canciones - Latina Live
+---
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pedidos de Canciones - Latina Live</title>
+<div class="card pedidos-container" style="max-width: 700px; margin: 0 auto;">
+    <h1 class="text-center">Pide tu Canción</h1>
+    <p class="text-center" style="margin-bottom: 2rem; color: var(--text-muted);">Envía tu petición directamente a
+        nuestra mesa de mezclas.</p>
 
-    <!-- Cargamos nuestra hoja de estilos principal para mantener la coherencia visual -->
-    <link rel="stylesheet" href="/css/custom.css">
-
-    <!-- Estilos específicos y simplificados para esta página -->
-    <style>
-        .pedidos-container {
-            max-width: 700px;
-            margin: 40px auto;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .pedidos-container h1 {
-            text-align: center;
-        }
-
-        #search-box {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            background-color: #fff;
-            color: #333;
-            font-size: 1rem;
-        }
-
-        .song-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .song-item:last-child {
-            border-bottom: none;
-        }
-
-        .song-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .song-title {
-            font-weight: bold;
-        }
-
-        .song-artist {
-            font-size: 0.9em;
-        }
-
-        .request-btn:disabled {
-            background-color: #5a5959;
-            cursor: not-allowed;
-        }
-
-        #status-message {
-            text-align: center;
-            padding: 10px;
-            margin: 15px 0;
-            border-radius: 4px;
-            display: none;
-        }
-
-        .status-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        .status-error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-    </style>
-</head>
-
-<body>
-    <!-- Añadimos un enlace de navegación para volver al inicio, útil para el usuario -->
-    <nav style="text-align: center; margin-bottom: 20px;">
-        <a href="/">← Volver al Inicio</a>
-    </nav>
-
-    <main>
-        <section class="pedidos-container">
-            <h1>Pide tu Canción</h1>
-            <form action="/api/pedido" method="POST">
-                <div style="margin-bottom: 1rem;">
-                    <label for="nombre-pedido" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Tu
-                        nombre:</label>
-                    <input type="text" id="nombre-pedido" name="nombre" placeholder="Ej: Ale" required
-                        style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #444; background: #333; color: white;">
-                </div>
-                <div style="margin-bottom: 1rem;">
-                    <label for="cancion-pedido" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">¿Qué
-                        canción quieres?</label>
-                    <input type="text" id="cancion-pedido" name="cancion" placeholder="Artista - Título" required
-                        style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #444; background: #333; color: white;">
-                </div>
-                <div style="margin-bottom: 1rem;">
-                    <label for="mensaje-pedido" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Tu
-                        saludo:</label>
-                    <textarea id="mensaje-pedido" name="mensaje" placeholder="Escribe un mensaje..."
-                        style="width: 100%; padding: 0.8rem; border-radius: 8px; border: 1px solid #444; background: #333; color: white;"></textarea>
-                </div>
-                <button type="submit" class="btn">Enviar a cabina</button>
-            </form>
-        </section>
-    </main>
-</body>
-
-</html>
+    <form action="/api/pedido" method="POST" class="chat-input-group">
+        <div style="margin-bottom: 1.5rem;">
+            <label for="nombre-pedido" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Tu
+                nombre:</label>
+            <input type="text" id="nombre-pedido" name="nombre" placeholder="Ej: Ale" required aria-required="true">
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+            <label for="cancion-pedido" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">¿Qué canción
+                quieres?</label>
+            <input type="text" id="cancion-pedido" name="cancion" placeholder="Artista - Título" required
+                aria-required="true">
+        </div>
+        <div style="margin-bottom: 1.5rem;">
+            <label for="mensaje-pedido" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Tu saludo o
+                mensaje:</label>
+            <textarea id="mensaje-pedido" name="mensaje" placeholder="Escribe un mensaje para el locutor..."
+                style="min-height: 120px;"></textarea>
+        </div>
+        <button type="submit" class="btn" style="width: 100%;">Enviar a cabina</button>
+    </form>
+</div>
