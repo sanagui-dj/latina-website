@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (startBtn) startBtn.addEventListener('click', iniciarExperiencia);
     if (favBtn) favBtn.addEventListener('click', marcarFavorito);
     if (nextBtn) nextBtn.addEventListener('click', mostrarSiguienteMensaje);
-    if (finalBtn) finalBtn.addEventListener('click', () => window.location.href = 'carta.html');
+    if (finalBtn) finalBtn.addEventListener('click', () => window.location.href = '/carta.html');
 });
 
 // Estado de la aplicación
