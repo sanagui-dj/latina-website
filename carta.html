@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mis últimas palabras | o quizás no.</title>
+    <link rel="stylesheet" href="14.css">
+</head>
+
+<body>
+
+    <div id="announcer" class="sr-only" aria-live="assertive"></div>
+
+    <main class="container" role="article">
+        <h1 tabindex="-1">para el amor de mi vida.</h1>
+
+        <div class="letter-content">
+            <p>Hace un tiempo yo no me veía aquí. No me veía ilusionado otra vez. No me veía con ganas de planear, de
+                cuidar, de quedarme. Y ahora me encuentro pensándote, agradeciendo que estés, valorando cada gesto, cada
+                detalle, cada momento donde decidimos intentarlo.</p>
+
+            <p>Hoy no quiero prometerte cosas enormes. Quiero prometerte algo más vulnerable: <span
+                    class="highlight">que voy a ser honesto contigo.</span></p>
+
+            <ul class="promise-list">
+                <li>Que cuando tenga miedo, no voy a huir.</li>
+                <li>Que cuando me sienta inseguro, voy a hablarlo.</li>
+                <li>Que no voy a dejar que el silencio arruine algo que se siente tan bonito.</li>
+            </ul>
+
+            <p>Me asusta lo mucho que me importas. Pero también me da paz saber que lo que estamos construyendo no es
+                desde la prisa, sino desde la elección.</p>
+
+            <p><span class="highlight">Hoy, 14 de febrero, no solo te digo “te amo”.</span></p>
+
+            <p>Gracias por quedarte.<br>
+                Gracias por elegirme.<br>
+                Gracias por dejarme sentir otra vez.</p>
+
+            <div class="final-choice">
+                Y si el amor es decidir todos los días… <br>
+                <span class="highlight">yo hoy te vuelvo a elegir.</span>
+            </div>
+        </div>
+
+        <div class="signature">
+            Con todo mi amor, para siempre.
+            <p> p.d: te mojaste con mi mensaje? </p>
+        </div>
+    </main>
+
+    <script>
+        window.addEventListener('load', () => {
+            const announcer = document.getElementById('announcer');
+            setTimeout(() => {
+                announcer.innerText = "Catorce de febrero. una fecha tan linda, pero mas linda es quien resibe esta carta.";
+            }, 500);
+        });
+    </script>
+</body>
+
+</html>

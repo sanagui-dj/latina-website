@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>11:11 </title>
+    <link rel="stylesheet" href="/css/14.css">
+</head>
+
+<body>
+
+    <div id="announcer" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+    <main class="container">
+        <section id="setup-screen" aria-labelledby="setup-title">
+            <h1 id="setup-title">11:11</h1>
+            <p>Construir esta historia contigo es mi mayor regalo que me pueden dar en este día. Te cuento: en esta lista vienen fragmentos de los últimos mensajes de 11:11 creo que desde enero hasta ahora. deberás guardar tu favorito! gracias por tantos momentos compartidos.</p>
+            <button id="start-btn" aria-label="Iniciar experiencia de recuerdos">Iniciar ❤️</button>
+        </section>
+
+        <section id="timer-screen" class="hidden" aria-live="polite">
+            <h2>SINCRONIZANDO</h2>
+            <div id="timer-display" class="heartbeat" role="timer" aria-label="Cuenta regresiva">11</div>
+        </section>
+
+        <section id="jar-screen" class="hidden" aria-live="polite">
+            <div class="message-box fade-content" role="region" aria-label="Recuerdo actual">
+                <div id="author-tag" class="author"></div>
+                <div id="text-body" class="content"></div>
+                <div id="ps-body" class="ps"></div>
+            </div>
+
+            <button id="fav-btn" class="btn-success">📍 Guardar como favorito</button>
+            <button id="next-btn" class="btn-secondary">Siguiente deseo</button>
+        </section>
+
+        <section id="final-screen" class="hidden" aria-labelledby="final-title">
+            <h2 id="final-title">Nuestra cuenta atrás</h2>
+            <div id="countdown" role="timer" aria-label="Tiempo restante hasta el 12 de julio de 2026"></div>
+            <div id="fav-review"></div>
+            <button id="final-redirect-btn">Leer mi carta final</button>
+        </section>
+    </main>
+
+    <audio id="music" loop preload="auto">
+        <source src="audio.mp3" type="audio/mpeg">
+        Tu navegador no soporta el elemento de audio.
+    </audio>
+
+    <script src="/scripts/14.js" defer></script>
+</body>
+
+</html>

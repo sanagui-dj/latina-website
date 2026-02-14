@@ -6,6 +6,7 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("img");
   eleventyConfig.addPassthroughCopy("stream.m3u");
   eleventyConfig.addPassthroughCopy("googlea95dadeac05ead3d.html");
+  eleventyConfig.addPassthroughCopy("audio.mp3");
   eleventyConfig.addPassthroughCopy("robots.txt");
   
   // ESTA LÍNEA ES CLAVE AHORA:
