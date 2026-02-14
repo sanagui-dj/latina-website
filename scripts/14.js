@@ -66,6 +66,16 @@ function anunciar(texto) {
  * Inicia la secuencia de temporizador
  */
 function iniciarExperiencia() {
+    // DESBLOQUEO DE AUDIO (Autoplay Hack)
+    // Reproducimos y pausamos inmediatamente para que el navegador "bendiga" el elemento de audio
+    if (audio) {
+        audio.volume = 0; // Silencio para que no se oiga un glitch
+        audio.play().then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+        }).catch(e => console.log("Error al desbloquear audio:", e));
+    }
+
     document.getElementById('setup-screen').classList.add('hidden');
     document.getElementById('timer-screen').classList.remove('hidden');
 
