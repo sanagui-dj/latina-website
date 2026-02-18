@@ -55,7 +55,7 @@ async function enviarNotaDeVoz(blobAudio, nombreUsuario) {
     try {
         // NOTA: Si tu web es HTTPS, esta petición podría seguir fallando 
         // hasta que el bot tenga SSL o uses un proxy inverso (como Nginx).
-        const response = await fetch('http://162.250.190.237:3000/api/nota-voz', {
+        const response = await fetch('https://latinalive.net:3000/api/nota-voz', {
             method: 'POST',
             // No incluimos headers de Content-Type porque el navegador 
             // los pone automáticamente al usar FormData con archivos.
