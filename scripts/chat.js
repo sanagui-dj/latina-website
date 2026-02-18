@@ -5,19 +5,17 @@ export async function initChat() {
     const chatForm = document.querySelector('.chat-controls');
 
     if (chatForm) {
-        // Remove old listener if any by cloning or just adding new one (event delegation is safer but this works for SPA if we re-run)
-        // To avoid duplicate listeners on re-init, we can check a flag or just use the onsubmit property which is singular.
         chatForm.onsubmit = function (e) {
             e.preventDefault();
             enviarMensaje();
         };
     }
 
-    // Clear existing interval to avoid duplicates
+    // Limpiar intervalo previo para evitar que el chat se cargue doble
     if (window.chatInterval) clearInterval(window.chatInterval);
 
     cargarChat();
-    window.chatInterval = setInterval(cargarChat, 4000);
+    window.chatInterval = setInterval(cargarChat, 4000); // Carga cada 4 segundos
 }
 
 async function enviarMensaje() {
@@ -30,31 +28,34 @@ async function enviarMensaje() {
 
     if (!mensaje || !mensaje.trim()) return;
 
-    // Visual Feedback
+    // Feedback visual para el usuario
     if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = "Enviando...";
     }
 
     try {
-        // Use relative URL
-        const response = await fetch('/api/enviar-web', {
+        // CORRECCIÓN: Usamos la ruta correcta del servidor (/api/pedido)
+        const response = await fetch('/api/pedido', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ usuario, mensaje })
+            body: JSON.stringify({ 
+                nombre: usuario, 
+                mensaje: mensaje,
+                cancion: "Mensaje de Chat" // Etiqueta para Telegram
+            })
         });
 
+        // Como el servidor responde con una redirección (302), 
+        // el 'response.ok' será verdadero si llega a la página final
         if (response.ok) {
             mensajeInput.value = '';
             await cargarChat();
         } else {
-            console.error("Server responded with error:", response.status);
-            let errorText = "";
-            try { errorText = await response.text(); } catch (e) { }
-            alert(`Error del servidor (${response.status}): ${errorText || "No se pudo enviar el mensaje."}`);
+            alert("No se pudo enviar el mensaje al chat.");
         }
     } catch (e) {
-        console.error("Error sending message", e);
+        console.error("Error al enviar mensaje", e);
         alert(`Error de conexión: ${e.message}`);
     } finally {
         if (submitBtn) {
@@ -72,44 +73,18 @@ async function cargarChat() {
         const box = document.getElementById('mensajes-box');
         if (!box) return;
 
-        // Use relative URL
+        // Consultamos la ruta de lectura del servidor
         const res = await fetch('/api/leer-chat');
-        const data = await res.json();
-        const mensajes = Array.isArray(data) ? data : (data.mensajes || []);
+        const mensajes = await res.json(); 
 
         if (mensajes.length > lastMessageCount && lastMessageCount !== 0) {
-            // Optional: Sound or visual cue
+            // Aquí podrías poner un sonido de "Pop" si quisieras
         }
         lastMessageCount = mensajes.length;
 
         box.innerHTML = mensajes.map(m => {
-            let timeStr = '';
-            if (m.fecha) {
-                const date = new Date(m.fecha);
-                // Check validation (though server now sends formatted string, checking is safe)
-                // Note: Server says it sends locale string '10:30 PM'. new Date('10:30 PM') might be Invalid Date in some browsers depending on locale/date.
-                // IF the server sends "10:30 PM", new Date() might fail.
-                // Server code: new Date().toLocaleTimeString(...) -> returns string.
-                // If we pass that string to new Date(), it might work or fail.
-                // Fix: The server sends a DISPLAY string in 'fecha', not an ISO string.
-                // So we should just display it directly if it's already formatted?
-                // Let's assume server sends a displayable string now.
-                // But wait, the previous code tried to parse it.
-                // If server is "10:30", new Date("10:30") is Invalid.
-                // I will just display m.fecha directly if parsing fails, or trust it is a string.
-
-                // Let's try to parse, if invalid, use string as is?
-                // Actually, looking at server.js: fecha: new Date().toLocaleTimeString(...)
-                // This returns a string like "10:30:00" or "10:30 a. m.".
-                // So we should just print it.
-                timeStr = m.fecha;
-            }
-
-            // Should we try to re-format? 
-            // If it's already "10:30", just use it. 
-            // The previous logic was `new Date(m.fecha)`. This was probably failing because of the localized string format.
-            // Since I control server.js now and it sends a formatted string, I can just use it.
-
+            // El servidor ya envía 'fecha' formateada como "10:30 PM"
+            const timeStr = m.fecha || ''; 
             const timestampHTML = timeStr ? `<small style="color: var(--brand-primary); margin-right: 0.5rem;">[${timeStr}]</small>` : '';
 
             return `
@@ -121,8 +96,9 @@ async function cargarChat() {
             `;
         }).join('');
 
+        // Auto-scroll al final para ver los mensajes nuevos
         box.scrollTop = box.scrollHeight;
     } catch (e) {
-        console.error("Error loading chat", e);
+        console.error("Error cargando el chat", e);
     }
 }
