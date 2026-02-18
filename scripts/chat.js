@@ -49,11 +49,15 @@ async function enviarMensaje() {
             await cargarChat();
         } else {
             console.error("Server responded with error:", response.status);
-            alert("Hubo un problema al enviar el mensaje. Intenta de nuevo.");
+            // Try to get error text
+            let errorText = "";
+            try { errorText = await response.text(); } catch (e) { }
+
+            alert(`Error del servidor (${response.status}): ${errorText || "No se pudo enviar el mensaje."}.`);
         }
     } catch (e) {
         console.error("Error sending message", e);
-        alert("Error de conexión. Verifica tu internet.");
+        alert(`Error de conexión: ${e.message}`);
     } finally {
         // Restore button
         if (submitBtn) {
