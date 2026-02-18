@@ -45,7 +45,7 @@ async function enviarNotaDeVoz(blobAudio, nombreUsuario) {
 
     try {
         // REEMPLAZA CON TU IP DE LINUX REAL
-        const response = await fetch('https://162.250.190.237:3000/api/nota-voz', {
+        const response = await fetch('http://162.250.190.237:3000/api/nota-voz', {
             method: 'POST',
             body: formData
         });
