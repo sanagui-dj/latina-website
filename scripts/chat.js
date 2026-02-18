@@ -11,11 +11,10 @@ export async function initChat() {
         };
     }
 
-    // Limpiar intervalo previo para evitar que el chat se cargue doble
     if (window.chatInterval) clearInterval(window.chatInterval);
 
     cargarChat();
-    window.chatInterval = setInterval(cargarChat, 4000); // Carga cada 4 segundos
+    window.chatInterval = setInterval(cargarChat, 4000); 
 }
 
 async function enviarMensaje() {
@@ -28,26 +27,23 @@ async function enviarMensaje() {
 
     if (!mensaje || !mensaje.trim()) return;
 
-    // Feedback visual para el usuario
     if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = "Enviando...";
     }
 
     try {
-        // CORRECCIÓN: Usamos la ruta correcta del servidor (/api/pedido)
-        const response = await fetch('/api/pedido', {
+        // ACTUALIZACIÓN: Usamos la ruta dedicada al chat que creamos en el servidor
+        const response = await fetch('/api/enviar-web', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ 
-                nombre: usuario, 
-                mensaje: mensaje,
-                cancion: "Mensaje de Chat" // Etiqueta para Telegram
+                usuario: usuario, // Cambiado de 'nombre' a 'usuario' para coincidir con el servidor
+                mensaje: mensaje
             })
         });
 
-        // Como el servidor responde con una redirección (302), 
-        // el 'response.ok' será verdadero si llega a la página final
+        // El servidor ahora responde con res.json({ status: 'ok' })
         if (response.ok) {
             mensajeInput.value = '';
             await cargarChat();
@@ -56,7 +52,6 @@ async function enviarMensaje() {
         }
     } catch (e) {
         console.error("Error al enviar mensaje", e);
-        alert(`Error de conexión: ${e.message}`);
     } finally {
         if (submitBtn) {
             submitBtn.disabled = false;
@@ -73,17 +68,12 @@ async function cargarChat() {
         const box = document.getElementById('mensajes-box');
         if (!box) return;
 
-        // Consultamos la ruta de lectura del servidor
         const res = await fetch('/api/leer-chat');
         const mensajes = await res.json(); 
 
-        if (mensajes.length > lastMessageCount && lastMessageCount !== 0) {
-            // Aquí podrías poner un sonido de "Pop" si quisieras
-        }
         lastMessageCount = mensajes.length;
 
         box.innerHTML = mensajes.map(m => {
-            // El servidor ya envía 'fecha' formateada como "10:30 PM"
             const timeStr = m.fecha || ''; 
             const timestampHTML = timeStr ? `<small style="color: var(--brand-primary); margin-right: 0.5rem;">[${timeStr}]</small>` : '';
 
@@ -96,7 +86,6 @@ async function cargarChat() {
             `;
         }).join('');
 
-        // Auto-scroll al final para ver los mensajes nuevos
         box.scrollTop = box.scrollHeight;
     } catch (e) {
         console.error("Error cargando el chat", e);
