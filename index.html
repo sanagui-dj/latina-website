@@ -15,13 +15,12 @@ title: Latina live. ¡tu alma, tu música!
 <section class="chat-section card" aria-labelledby="chat-title" role="region">
   <h2 id="chat-title" class="text-center">Chat en Vivo</h2>
 
-  <div id="chat-container">
-    <label for="flujo-chat" class="sr-only">Historial de mensajes del chat</label>
-    <textarea id="flujo-chat" readonly aria-live="polite" aria-atomic="false"
-      placeholder="Esperando mensajes de la cabina..."></textarea>
+  <div id="chat-container"
+    style="height:400px; overflow-y:scroll; padding:1rem; margin-bottom: 1rem; background: var(--bg-primary); border-radius: 8px;">
+    <div id="mensajes-box"></div>
   </div>
 
-  <form class="chat-controls chat-input-group" onsubmit="event.preventDefault(); enviarMensaje();">
+  <form class="chat-controls chat-input-group">
     <div style="margin-bottom: 1rem;">
       <label for="chat-nombre">Tu nombre:</label>
       <input type="text" id="chat-nombre" placeholder="Ej: Ale" required aria-required="true">

@@ -2,25 +2,22 @@ export async function initChat() {
     const chatContainer = document.getElementById('chat-container');
     if (!chatContainer) return; // Exit if chat is not present on this page
 
-    const enviarBtn = document.querySelector('.chat-controls button');
-    const msgInput = document.getElementById('chat-msg');
+    const chatForm = document.querySelector('.chat-controls');
 
-    if(enviarBtn) {
-        enviarBtn.onclick = enviarMensaje;
-    }
-    
-    if(msgInput) {
-        msgInput.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                enviarMensaje();
-            }
-        });
+    if (chatForm) {
+        // Remove old listener if any (though difficult with anonymous funcs, replacing element is cleaner or just addEventListener)
+        // Since we re-run this init, we want to avoid double submission.
+        // Easiest is to set onsubmit property.
+        chatForm.onsubmit = function (e) {
+            e.preventDefault();
+            enviarMensaje();
+        };
     }
 
     // Start polling
     cargarChat();
     const interval = setInterval(cargarChat, 4000);
-    
+
     // Store interval to clear it on page leave (if needed, though Swup hard replace might handle it)
     window.chatInterval = interval;
 }
@@ -28,16 +25,16 @@ export async function initChat() {
 async function enviarMensaje() {
     const usuarioInput = document.getElementById('chat-nombre');
     const mensajeInput = document.getElementById('chat-msg');
-    
+
     const usuario = usuarioInput.value || "Invitado";
     const mensaje = mensajeInput.value;
-    
-    if(!mensaje) return;
+
+    if (!mensaje) return;
 
     try {
         await fetch('https://latinalive.net/api/enviar-web', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ usuario, mensaje })
         });
         mensajeInput.value = '';
@@ -52,25 +49,25 @@ let lastMessageCount = 0;
 async function cargarChat() {
     try {
         const box = document.getElementById('mensajes-box');
-        if(!box) return;
+        if (!box) return;
 
         const res = await fetch('https://latinalive.net/api/leer-chat');
         const data = await res.json();
         const mensajes = Array.isArray(data) ? data : (data.mensajes || []);
-        
+
         // Highlight New Messages if count increased
         if (mensajes.length > lastMessageCount && lastMessageCount !== 0) {
-           // Visual cue logic
+            // Visual cue logic
         }
         lastMessageCount = mensajes.length;
 
         box.innerHTML = mensajes.map(m => {
             let timeStr = '';
             if (m.fecha) {
-              const date = new Date(m.fecha);
-              if (!isNaN(date.getTime())) {
-                timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-              }
+                const date = new Date(m.fecha);
+                if (!isNaN(date.getTime())) {
+                    timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                }
             }
             const timestampHTML = timeStr ? `<small style="color: var(--brand-primary); margin-right: 0.5rem;">[${timeStr}]</small>` : '';
 
@@ -82,7 +79,7 @@ async function cargarChat() {
             </p>
             `;
         }).join('');
-        
+
         box.scrollTop = box.scrollHeight;
     } catch (e) {
         console.error("Error loading chat", e);
