@@ -3,52 +3,7 @@ layout: base.njk
 title: Latina live. ¡tu alma, tu música!
 ---
 
-<section class="player-container text-center" id="player" aria-labelledby="player-title" role="region">
-  <h1 id="player-title">¡Sintonízate con nosotros!</h1>
-  <p class="mb-4">Vibra en nuestra onda...</p>
-  <p>Actualmente: <span id="nombre-locutor" style="font-weight:bold; color:var(--brand-primary);"
-      aria-live="polite">Latina Live:
-      Conectando...</span></p>
-
-  <script>
-    async function actualizarLocutor() {
-      try {
-        const respuesta = await fetch('https://latinalive.net/api/estado');
-        const datos = await respuesta.json();
-        document.getElementById('nombre-locutor').innerText = datos.locutor;
-      } catch (error) {
-        console.log("Locutor update failed", error);
-      }
-    }
-    setInterval(actualizarLocutor, 10000);
-    actualizarLocutor();
-  </script>
-
-  <div class="audio-player">
-    <audio id="audio" controls autoplay preload="none" src="https://radios.latinalive.net/listen/latina/live">
-      Tu navegador no soporta el elemento de audio.
-    </audio>
-    <div class="track-info" id="track-info" style="font-weight: 600; font-size: 1.2rem; color: var(--brand-primary);">
-      Cargando información...
-    </div>
-
-    <div class="controls" style="margin: 1rem 0; display: flex; gap: 1rem; justify-content: center;">
-      <button id="lowerVolumeBtn" aria-label="Bajar volumen" class="btn" style="padding: 0.8rem 1.5rem;">- Vol</button>
-      <button id="raiseVolumeBtn" aria-label="Subir volumen" class="btn" style="padding: 0.8rem 1.5rem;">+ Vol</button>
-    </div>
-    <div class="volume-display" id="volume-display"
-      style="font-size: 1rem; color: var(--text-muted); transition: transform 0.2s;">
-      Volumen: 100%
-    </div>
-
-    <div style="margin-top: 1.5rem;">
-      <a href="/stream.m3u" class="external-player-link"
-        style="font-size: 0.9rem; text-decoration: underline;">Reproductor Externo</a>
-    </div>
-  </div>
-</section>
-
-<script src="/scripts/player.js" defer></script>
+<!-- Player moved to base.njk for continuous playback -->
 
 <section class="requests-section card text-center" aria-labelledby="requests-title"
   style="border: 2px solid var(--brand-primary);">
@@ -81,65 +36,7 @@ title: Latina live. ¡tu alma, tu música!
   </form>
 </section>
 
-<script>
-  let historialPrevio = "";
-
-  async function enviarMensaje() {
-    const usuarioInput = document.getElementById('chat-nombre');
-    const mensajeInput = document.getElementById('chat-msg');
-
-    const usuario = usuarioInput.value || "Invitado";
-    const mensaje = mensajeInput.value;
-
-    if (!mensaje) return;
-
-    try {
-      await fetch('https://latinalive.net/api/enviar-web', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ usuario, mensaje })
-      });
-      mensajeInput.value = '';
-      cargarChat();
-    } catch (e) {
-      console.error("Error sending message", e);
-    }
-  }
-
-  async function cargarChat() {
-    try {
-      const res = await fetch('https://latinalive.net/api/leer-chat');
-      const mensajes = await res.json();
-
-      if (!Array.isArray(mensajes)) return;
-
-      // Generamos el texto plano para el textarea (flujo accesible)
-      const nuevoTexto = mensajes.map(m => {
-        return `[${m.fecha || '--:--'}] ${m.usuario}: ${m.mensaje}`;
-      }).join('\n');
-
-      // Solo actualizamos si hay cambios para no interrumpir al lector de pantalla
-      if (nuevoTexto !== historialPrevio) {
-        const areaTexto = document.getElementById('flujo-chat');
-        areaTexto.value = nuevoTexto;
-        // Scroll automático al final
-        areaTexto.scrollTop = areaTexto.scrollHeight;
-        historialPrevio = nuevoTexto;
-      }
-    } catch (e) {
-      console.error("Error loading chat", e);
-    }
-  }
-
-  setInterval(cargarChat, 4000);
-  cargarChat();
-
-  document.getElementById('chat-msg').addEventListener('keypress', function (e) {
-    if (e.key === 'Enter') {
-      enviarMensaje();
-    }
-  });
-</script>
+<!-- Chat scripts handled by global init -->
 
 <section class="support-section card text-center" style="border-color: var(--brand-secondary);" role="region"
   aria-labelledby="support-title">

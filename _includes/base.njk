@@ -55,7 +55,37 @@
         <p>¡Bienvenido a tu apertura auditiva!</p>
     </header>
 
-    <main id="main-content">
+    <!-- Persistent Player Section (Moved from index.html) -->
+    <section class="player-container text-center" id="persistent-player" aria-labelledby="player-title">
+      <h1 id="player-title">¡Sintonízate con nosotros!</h1>
+      <p class="mb-4">Vibra en nuestra onda...</p>
+      <p>Actualmente: <span id="nombre-locutor" style="font-weight:bold; color:var(--brand-primary);">Cargando...</span></p>
+
+      <div class="audio-player">
+        <audio id="audio" controls autoplay preload="none" src="https://radios.latinalive.net/listen/latina/live">
+          Tu navegador no soporta el elemento de audio.
+        </audio>
+        <div class="track-info" id="track-info"
+          style="font-weight: 600; font-size: 1.2rem; color: var(--brand-primary);">
+          Cargando información...
+        </div>
+
+        <div class="controls" style="margin: 1rem 0; display: flex; gap: 1rem; justify-content: center;">
+          <button id="lowerVolumeBtn" aria-label="Bajar volumen" class="btn" style="padding: 0.8rem 1.5rem;">- Vol</button>
+          <button id="raiseVolumeBtn" aria-label="Subir volumen" class="btn" style="padding: 0.8rem 1.5rem;">+ Vol</button>
+        </div>
+        <div class="volume-display" id="volume-display"
+          style="font-size: 1rem; color: var(--text-muted); transition: transform 0.2s;">
+          Volumen: 100%
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <a href="/stream.m3u" class="external-player-link" style="font-size: 0.9rem; text-decoration: underline;">Reproductor Externo</a>
+        </div>
+      </div>
+    </section>
+
+    <main id="swup" class="transition-fade">
         {{ content | safe }}
     </main>
 
@@ -86,23 +116,75 @@
       ]
     }
     </script>
-
+    
+    <!-- Scripts -->
+    <script src="https://unpkg.com/swup@4"></script>
+    <script src="/scripts/player.js" defer></script>
     <script type="module" src="/scripts/notificaciones.js" defer></script>
+    
     <script>
-        // Navbar Scrolled State
-        const nav = document.querySelector('.site-nav');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                nav.classList.add('scrolled');
-            } else {
-                nav.classList.remove('scrolled');
-            }
-        });
+    // Initialize Locutor Update (Persistent)
+    async function actualizarLocutor() {
+        try {
+            const respuesta = await fetch('https://latinalive.net/api/estado');
+            const datos = await respuesta.json();
+            const locutorEl = document.getElementById('nombre-locutor');
+            if(locutorEl) locutorEl.innerText = datos.locutor;
+        } catch (error) {
+            console.log("Locutor update failed", error);
+        }
+    }
+    // Run once and interval
+    actualizarLocutor();
+    setInterval(actualizarLocutor, 10000);
 
-        // Theme Toggle
-        const toggleBtn = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
+    // Initialize Swup
+    const swup = new Swup({
+        containers: ["#swup"]
+    });
+
+    // Re-run scripts on content replace
+    async function initPageScripts() {
+        window.scrollTo(0, 0);
         
+        // Dynamic Import of Chat logic if element exists
+        const chatBox = document.getElementById('chat-container');
+        if(chatBox) {
+            // Clear old interval if exists
+            if(window.chatInterval) clearInterval(window.chatInterval);
+            
+            try {
+                // Use a timestamp to force module reload or just rely on function export
+                const module = await import('/scripts/chat.js');
+                if(module && module.initChat) {
+                    module.initChat();
+                }
+            } catch(e) {
+                console.error("Chat script failed", e);
+            }
+        }
+    }
+
+    swup.hooks.on('content:replace', initPageScripts);
+    
+    // Run on initial load too
+    document.addEventListener('DOMContentLoaded', initPageScripts);
+
+    // Navbar Scrolled State
+    const nav = document.querySelector('.site-nav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    });
+
+    // Theme Toggle Logic
+    const toggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    
+    if(toggleBtn) {
         toggleBtn.addEventListener('click', () => {
             let currentTheme = document.documentElement.getAttribute('data-theme');
             let newTheme = currentTheme === 'dark' ? 'light' : 'dark';
@@ -111,13 +193,14 @@
             localStorage.setItem('theme', newTheme);
             updateIcon(newTheme);
         });
+    }
 
-        function updateIcon(theme) {
-            themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
-        }
-        
-        // Init Icon
-        updateIcon(document.documentElement.getAttribute('data-theme'));
+    function updateIcon(theme) {
+        if(themeIcon) themeIcon.textContent = theme === 'dark' ? '🌙' : '☀️';
+    }
+    
+    // Init Icon
+    updateIcon(document.documentElement.getAttribute('data-theme'));
     </script>
 </body>
 </html>
