@@ -8,45 +8,57 @@ recordBtn.addEventListener('click', async () => {
         try {
             // Pedir permiso para el micrófono
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
+            
+            // Configuración de formato compatible con la mayoría de navegadores y Telegram
+            const options = { mimeType: 'audio/webm' }; 
+            mediaRecorder = new MediaRecorder(stream, options);
             audioChunks = [];
 
             mediaRecorder.ondataavailable = (event) => {
-                audioChunks.push(event.data);
+                if (event.data.size > 0) {
+                    audioChunks.push(event.data);
+                }
             };
 
             mediaRecorder.onstop = async () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/ogg' });
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
                 const nombre = document.getElementById('user-name').value || 'Anónimo';
                 
                 statusLabel.innerText = "Enviando...";
                 await enviarNotaDeVoz(audioBlob, nombre);
+                
+                // Detener todos los tracks del micrófono para apagar la luz de grabación
+                stream.getTracks().forEach(track => track.stop());
             };
 
             mediaRecorder.start();
             recordBtn.innerText = "🛑 Detener y Enviar";
-            recordBtn.style.backgroundColor = "#ff4d4d"; // Cambio de color visual
+            recordBtn.style.backgroundColor = "#ff4d4d"; 
             statusLabel.innerText = "Grabando...";
         } catch (err) {
             console.error("No se pudo acceder al micrófono:", err);
-            statusLabel.innerText = "❌ Error: Micrófono no disponible";
+            statusLabel.innerText = "❌ Micrófono no disponible";
         }
     } else {
         mediaRecorder.stop();
         recordBtn.innerText = "🎤 Grabar Nota de Voz";
-        recordBtn.style.backgroundColor = ""; // Vuelve al color original
+        recordBtn.style.backgroundColor = ""; 
     }
 });
 
 async function enviarNotaDeVoz(blobAudio, nombreUsuario) {
     const formData = new FormData();
-    formData.append('audio', blobAudio, 'voz.ogg'); 
+    // 'audio' debe coincidir con upload.single('audio') en server.js
+    formData.append('audio', blobAudio, 'voz.webm'); 
     formData.append('nombre', nombreUsuario);
 
     try {
-        // REEMPLAZA CON TU IP DE LINUX REAL
+        // NOTA: Si tu web es HTTPS, esta petición podría seguir fallando 
+        // hasta que el bot tenga SSL o uses un proxy inverso (como Nginx).
         const response = await fetch('http://162.250.190.237:3000/api/nota-voz', {
             method: 'POST',
+            // No incluimos headers de Content-Type porque el navegador 
+            // los pone automáticamente al usar FormData con archivos.
             body: formData
         });
 
@@ -54,10 +66,12 @@ async function enviarNotaDeVoz(blobAudio, nombreUsuario) {
             statusLabel.innerText = "✅ ¡Enviado al Staff!";
             setTimeout(() => statusLabel.innerText = "Listo", 3000);
         } else {
-            statusLabel.innerText = "❌ Error al enviar";
+            const errorData = await response.json().catch(() => ({}));
+            console.error("Error del servidor:", errorData);
+            statusLabel.innerText = "❌ Error en el servidor";
         }
     } catch (error) {
         console.error("Error de conexión:", error);
-        statusLabel.innerText = "❌ Error de conexión con el servidor";
+        statusLabel.innerText = "❌ Error de conexión";
     }
 }
