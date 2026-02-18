@@ -1,19 +1,19 @@
 export async function initChat() {
     const chatContainer = document.getElementById('chat-container');
-    if (!chatContainer) return; // Exit if chat is not present on this page
+    if (!chatContainer) return;
 
     const chatForm = document.querySelector('.chat-controls');
 
     if (chatForm) {
-        // Use addEventListener instead of onsubmit property for better compatibility
-        chatForm.addEventListener('submit', function (e) {
+        // Remove old listener if any by cloning or just adding new one (event delegation is safer but this works for SPA if we re-run)
+        // To avoid duplicate listeners on re-init, we can check a flag or just use the onsubmit property which is singular.
+        chatForm.onsubmit = function (e) {
             e.preventDefault();
             enviarMensaje();
-        });
+        };
     }
 
-    // Start polling if not already started (check window.chatInterval logic if needed)
-    // Clear existing to avoid duplicates if initChat is called multiple times
+    // Clear existing interval to avoid duplicates
     if (window.chatInterval) clearInterval(window.chatInterval);
 
     cargarChat();
@@ -28,16 +28,17 @@ async function enviarMensaje() {
     const usuario = usuarioInput.value || "Invitado";
     const mensaje = mensajeInput.value;
 
-    if (!mensaje.trim()) return;
+    if (!mensaje || !mensaje.trim()) return;
 
-    // Visual Feedback: Disable button and show loading logic
+    // Visual Feedback
     if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.textContent = "Enviando...";
     }
 
     try {
-        const response = await fetch('https://latinalive.net/api/enviar-web', {
+        // Use relative URL
+        const response = await fetch('/api/enviar-web', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ usuario, mensaje })
@@ -45,26 +46,21 @@ async function enviarMensaje() {
 
         if (response.ok) {
             mensajeInput.value = '';
-            // Refresh chat immediately
             await cargarChat();
         } else {
             console.error("Server responded with error:", response.status);
-            // Try to get error text
             let errorText = "";
             try { errorText = await response.text(); } catch (e) { }
-
-            alert(`Error del servidor (${response.status}): ${errorText || "No se pudo enviar el mensaje."}.`);
+            alert(`Error del servidor (${response.status}): ${errorText || "No se pudo enviar el mensaje."}`);
         }
     } catch (e) {
         console.error("Error sending message", e);
         alert(`Error de conexión: ${e.message}`);
     } finally {
-        // Restore button
         if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.textContent = "Enviar a Latina Live";
         }
-        // Keep focus on input for better UX
         mensajeInput.focus();
     }
 }
@@ -76,13 +72,13 @@ async function cargarChat() {
         const box = document.getElementById('mensajes-box');
         if (!box) return;
 
-        const res = await fetch('https://latinalive.net/api/leer-chat');
+        // Use relative URL
+        const res = await fetch('/api/leer-chat');
         const data = await res.json();
         const mensajes = Array.isArray(data) ? data : (data.mensajes || []);
 
-        // Highlight New Messages if count increased
         if (mensajes.length > lastMessageCount && lastMessageCount !== 0) {
-            // Visual cue logic
+            // Optional: Sound or visual cue
         }
         lastMessageCount = mensajes.length;
 
@@ -90,10 +86,30 @@ async function cargarChat() {
             let timeStr = '';
             if (m.fecha) {
                 const date = new Date(m.fecha);
-                if (!isNaN(date.getTime())) {
-                    timeStr = date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-                }
+                // Check validation (though server now sends formatted string, checking is safe)
+                // Note: Server says it sends locale string '10:30 PM'. new Date('10:30 PM') might be Invalid Date in some browsers depending on locale/date.
+                // IF the server sends "10:30 PM", new Date() might fail.
+                // Server code: new Date().toLocaleTimeString(...) -> returns string.
+                // If we pass that string to new Date(), it might work or fail.
+                // Fix: The server sends a DISPLAY string in 'fecha', not an ISO string.
+                // So we should just display it directly if it's already formatted?
+                // Let's assume server sends a displayable string now.
+                // But wait, the previous code tried to parse it.
+                // If server is "10:30", new Date("10:30") is Invalid.
+                // I will just display m.fecha directly if parsing fails, or trust it is a string.
+
+                // Let's try to parse, if invalid, use string as is?
+                // Actually, looking at server.js: fecha: new Date().toLocaleTimeString(...)
+                // This returns a string like "10:30:00" or "10:30 a. m.".
+                // So we should just print it.
+                timeStr = m.fecha;
             }
+
+            // Should we try to re-format? 
+            // If it's already "10:30", just use it. 
+            // The previous logic was `new Date(m.fecha)`. This was probably failing because of the localized string format.
+            // Since I control server.js now and it sends a formatted string, I can just use it.
+
             const timestampHTML = timeStr ? `<small style="color: var(--brand-primary); margin-right: 0.5rem;">[${timeStr}]</small>` : '';
 
             return `

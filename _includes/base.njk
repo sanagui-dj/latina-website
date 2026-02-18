@@ -126,7 +126,7 @@
     // Initialize Locutor Update (Persistent)
     async function actualizarLocutor() {
         try {
-            const respuesta = await fetch('https://latinalive.net/api/estado');
+            const respuesta = await fetch('/api/estado');
             const datos = await respuesta.json();
             const locutorEl = document.getElementById('nombre-locutor');
             if(locutorEl) locutorEl.innerText = datos.locutor;
